@@ -1,3 +1,5 @@
+## HackerRank-SQL(Basic)SkillsCertificationTest
+
 Question 1: A university has created a rule that every student will have their own supervisor. **`Write a query that will give a student list with name and roll_number where either advisor is Male with 
 salary greater than 15000 or Female advisor with salary greater than 20000`**. There are two tables: student_information and faculty_information 
 
