@@ -27,3 +27,63 @@ JOIN (
 ) em ON si.roll_number = em.roll_number
 WHERE em.total_sum < 100;
 ```
+
+## HackerRank Problem Solving
+
+#### Revising the Select Query I
+Query all columns for all American cities in the CITY table with populations larger than 100000. The CountryCode for America is USA.
+
+```
+SELECT *
+FROM city
+WHERE countrycode = 'USA' AND population > 100000;
+```
+
+#### Revising the Select Query II
+Query the NAME field for all American cities in the CITY table with populations larger than 120000. The CountryCode for America is USA.
+
+```
+SELECT NAME
+FROM city
+WHERE countrycode = 'USA' AND population > 120000;
+```
+
+#### Select All
+Query all columns (attributes) for every row in the CITY table.
+
+```
+SELECT * FROM CITY;
+```
+
+#### Japanese Cities' Attributes
+
+Query all attributes of every Japanese city in the CITY table. The COUNTRYCODE for Japan is JPN.
+
+
+
+```
+SELECT * FROM city WHERE countrycode = 'JPN';
+```
+
+
+#### Japanese Cities' Names
+
+```
+SELECT name FROM city WHERE countrycode = 'JPN';
+```
+
+
+#### Weather Observation Station 1
+
+```
+SELECT city,state FROM station;
+```
+
+#### Weather Observation Station 3
+
+Query a list of CITY names from STATION for cities that have an even ID number. Print the results in any order, but exclude duplicates from the answer.
+```
+SELECT DISTINCT CITY
+FROM STATION
+WHERE MOD(ID,2) = 0;
+```
