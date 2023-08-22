@@ -8,6 +8,8 @@ You'll primarily use a common table expression for two reasons:
 - To write **`recursive functions`**
 
 
+
+
 ## How to Create a Common Table Expression
 You can create a Common Table Expression (CTE) using the **`WITH keyword`**. You can specify multiple common table expressions at the same time by `comma-separating` the queries making up each common table expression.
 
@@ -49,8 +51,7 @@ FROM
     barca_players;
 ```
 
-
-![Screenshot-2023-02-17-at-22 59 25](https://github.com/Mohsem35/DBA/assets/58659448/f601bddb-7412-4f18-a247-aac72bb2261a)
+![rsz_262418482-f601bddb-7412-4f18-a247-aac72bb2261a](https://github.com/Mohsem35/DBA/assets/58659448/ae46a6c0-4e5f-4407-8b81-7745403b9f13)
 
 
 ## How to Use Common Table Expressions With Parameters
