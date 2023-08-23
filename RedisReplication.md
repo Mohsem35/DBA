@@ -47,7 +47,7 @@ resynchronization occurs: the replica will receive a fresh copy of the dataset.
 
 
 
-### How Redis Data Replication Works?
+### What is Redis Data Replication ID?
 
 A **`replication ID`** identifies a certain **`data set’s history`**. A unique replication ID is generated for this instance every time it starts over as a 
 master or a replica is promoted to master.
@@ -59,5 +59,14 @@ For a given history (replication ID) that has the most current data set, it is t
 
 For example, if two instances A and B both have the same replication ID, but one has offset **`1000`** and the other has offset **`1023`**, the **`first is missing some 
 commands`** applied to the data set.
+
+
+### INFO and ROLE Command
+
+There are two Redis commands that provide a wealth of information about the master and replica instances’ current replication parameters.
+
+**`INFO`**: Only **`information relevant`** to the replication is presented when the command is run with the replication option as INFO replication.
+
+**`ROLE`**: is a more computer-friendly command that displays the **`replication status of masters and replicas`**, as well as replication offsets, a list of linked replicas, and so on.
 
 
