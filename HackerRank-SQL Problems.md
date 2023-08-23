@@ -3,7 +3,7 @@
 Question 1: A university has created a rule that every student will have their own supervisor. **`Write a query that will give a student list with name and roll_number where either advisor is Male with 
 salary greater than 15000 or Female advisor with salary greater than 20000`**. There are two tables: student_information and faculty_information 
 
-```
+```sql
 SELECT roll_number, name
 FROM student_information
 WHERE advisor IN (
@@ -18,7 +18,7 @@ Question 2: A school recently conducted its annual examination and wishes to kno
 **`Write a query to return the roll number and names of students who have a total of less than 100 marks including all 3 subjects`**. There are two tables: student_information and examination_marks. 
 Their primary keys are roll_number.
 
-```
+```sql
 SELECT si.roll_number, si.name
 FROM student_information si
 JOIN (
@@ -82,7 +82,8 @@ SELECT city,state FROM station;
 #### Weather Observation Station 3
 
 Query a list of CITY names from STATION for cities that have an even ID number. Print the results in any order, but exclude duplicates from the answer.
-```
+
+```sql
 SELECT DISTINCT CITY
 FROM STATION
 WHERE MOD(ID,2) = 0;
