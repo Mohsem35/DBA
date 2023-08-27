@@ -185,7 +185,12 @@ Usage of Triggers:
 6. Tracking data, or database object changes
 7. **`Audit database`**
 
-**`Events`**: MySQL Events are named **`database object`** which contains one or more SQL statement. They are stored in the database and executed at one or more intervals. Ex - Daily রাতের ১২ টায় database update হবে
+3 types of Triggers according to T-SQL
+- _DML_ triggers(`INSERT`, `UPDATE`, `DELETE`)
+- _DDL_ triggers (`CREATE`, `ALTER`, `DROP`)
+- _Logon_ triggers (LOGON events)
+
+**`Events`**: MySQL Events are named **`database object`** which contains one or more SQL statement. They are stored in the database and **`executed at one or more intervals`**. Ex - Daily রাতের ১২ টায় database update হবে
 - MySQL Event Thread টা আগে Enable করা লাগে, then আমরা events গুলো দেখতে পাই। 
 ```
 SET GLOBAL event_scheduler = ON;
@@ -245,8 +250,50 @@ SELECT * FROM pg_indexes;
 - শুধুমাত্র committed changes গুলোই আমরা SNAPSHOT তে দেখতে পাব, অন্য কোথাও Transaction change হইলে ও একই সময়ে SNAPSHOT update হবে না। SERIALIZABLE এর সাথে SNAPSHOT এর পার্থক্য হলো এইটা টেবিল Locked করে না. dirty reads = no, non-repeatable reads = no, phantom reads = no
 - আচ্ছা এখানে Transactions গুলো depends করতেসে BEGIN ->COMMIT/ROLLBACK Transactions এর circle এর উপ্রে 
 - On-Premises Database = আমরা পিসি তে hard disk তে যেই data রাখি locally, সেইটাই  on-premises database
-- ODBC - Open Database Connectivity একটা standard API that allows applications to access data in database management systems (DBMS) using SQL. ODBC permits maximum interoperability, which means a single application can access different DBMS
+
+**`ODBC`**: Open Database Connectivity একটা **`API`** developed by Microsoft that **`allows applications to access`** data in database management systems **`(DBMS)`** using SQL. ODBC permits maximum interoperability, which means a single application can access different DBMS. The functionality of ODBC is supported by its four components: an application, driver manager, driver, and data source.
+
 - How would you handle data loss during a database migration? - আগে Find out করব data loss টা হইতাসে কোন জায়গা থেইকা, then ওইটা repair করে database backup নিব
-- Hadoop - Open source framework for big data. Financial services companies use analytics to assess risk, build investment models, and create trading algorithms. Hadoop-powered analytics to execute predictive maintenance on their infrastructure
-- Backup type 3 - Full, Differential(যদি আমি আগে full backup নিয়ে রাখি then শুধুমাত্র যেই objects গুলো change হইসে সেইগুলির backup নিতে চাই তাহলে differential), Transaction Log(যদি আগে backup থাকে then changes transactions গুলোর backup নিবে)
-- EDA - Exploratory Data Analysis. Iterative process ব্যবহার করব CONVERT এবং DATEPART syntax
+
+**`Hadoop`**: Open source **`framework for big data`**. Financial services companies use analytics to assess risk, build investment models, and create trading algorithms. Hadoop-powered analytics to execute predictive maintenance on their infrastructure
+
+**`Backup`**
+
+Backup type 3
+1. Full
+2. Differential(যদি আমি আগে full backup নিয়ে রাখি then শুধুমাত্র যেই objects গুলো change হইসে সেইগুলির backup নিতে চাই তাহলে differential)
+3. Transaction Log(যদি আগে backup থাকে then changes transactions গুলোর backup নিবে)
+
+**`EDA`**: Exploratory Data Analysis. Iterative process ব্যবহার করব CONVERT এবং DATEPART syntax
+
+
+- UDF - User-defined function. 1. parameter accept করে 2. perform an action 3. Return result  করে হতে পারে সেইটা table. UDFs are also Modular Programming Tool
+
+What is Modular Programming ? - 1. Software design technique 2.আলাদা আলাদা functionality গুলো independently separate করে ফেলে
+
+
+A navigational database is structured like a tree. A value has a parent and a child, and that is how they link to each other. If you want to access data, you have to follow a particular route as you move from parent to child. On the other hand, a relational database is more flexible and uses a primary key, which is a unique identifier to access data.
+
+**`ACID`**
+
+Database Transaction must be 
+- **`A(atomic)`**: either completed or none of them completed 
+- **`C(consistent)`**: all data must be left in a consistent state
+- **`I(isolated)`**: transaction must be independent of another transaction
+- **`D(durable)`**
+
+- Log shipping is the same as a backup in Microsoft SQL. It uses rapid failover in instances when the main server is not working. Therefore, Log shipping is done manually.
+- SQL Server replication is a technology for copying and distributing data and database objects from one database to another and then synchronizing between databases to maintain consistency and integrity of the data. In most cases, replication is a process of reproducing the data at the desired targets
+
+
+**`CAP theorem`**: 
+CAP theorem or Eric Brewers theorem states that we can only achieve at **`most two out of three guarantees for a database`**: Consistency, Availability, and Partition Tolerance.
+- **`Consistency`**: means that all nodes in the network _see the same data at the same time_
+- **`Availability`**: is a guarantee that _every request receives a response_ about whether it was successful or failed.
+- **`Partition Tolerance`**: even if there is a network _outage in the data center and some of the computers are unreachable_, still the _system continues to perform_
+
+Distributed Transaction - ইহা অন্যান্য SQL Transaction এর মত, with a single key difference. The difference is this type of transaction can exist across multiple servers
+**`UNION vs UNION ALL`**: Union All will not remove duplicate rows or records
+
+
+- 2 types of Triggers based on behavior. 1. AFTER trigger 2. INSTEAD OF trigger(prevents execution)
