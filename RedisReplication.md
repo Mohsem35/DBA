@@ -187,6 +187,29 @@ redis 127.0.0.1:6379> ZRANGE tutorials 0 10 WITHSCORES
 
 In the above example, three values are inserted with its score in Redis sorted set named ‘tutorials’ by the command ZADD.
 
+#### Redis - HyperLogLog
+
+
+Redis HyperLogLog is an **`algorithm`** that uses randomization in order to provide an **`approximation`** of the number of **`unique elements in a set`** using just a constant, and small amount of memory.
+
+HyperLogLog provides a very good approximation of the cardinality of a set even using a very small amount of memory around 12 kbytes per key with a standard error of 0.81%. There is no limit to the number of items you can count, unless you approach 2^64 items.
+
+```
+redis 127.0.0.1:6379> PFADD tutorials "redis"  
+1) (integer) 1  
+redis 127.0.0.1:6379> PFADD tutorials "mongodb"  
+1) (integer) 1  
+redis 127.0.0.1:6379> PFADD tutorials "mysql"  
+1) (integer) 1  
+redis 127.0.0.1:6379> PFCOUNT tutorials  
+(integer) 3 
+```
+
+#### Redis - Publish Subscribe 
+
+Redis Pub/Sub implements the **`messaging system`** where the senders (in redis terminology called publishers) sends the messages while the receivers (subscribers) receive them. The link by which the messages are transferred is called **`channel`**.
+
+
 ## Redis Data Replication Process
 
 
