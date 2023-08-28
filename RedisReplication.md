@@ -1,6 +1,8 @@
 Redis is a fast **`in-memory database and cache`** that is built in C and tuned for speed. Redis stands for **`Remote Dictionary Server`** and it is open source 
 under the BSD license.
 
+Redis holds its database entirely in the **`memory`**, using the **`disk only for persistence`**
+
 Hence Redis is often referred to as a **`data structure server`**. 
 
 ## Features of Redis Data Replication
@@ -17,6 +19,173 @@ Hence Redis is often referred to as a **`data structure server`**.
   redis.conf to avoid persisting at all, then connecting a replica configured to save periodically or with AOF enabled. This setup, however, must be treated with
   caution because a restarted master will start with an empty dataset, and if the replica attempts to sync with it, the replica will be emptied as well.
 
+## Redis Advantages
+
+**`Exceptionally fast`** − Redis is very fast and can perform about _110000 SETs_/second, about _81000 GETs_/second.
+
+**`Supports rich data types`** − Redis natively supports most of the datatypes that developers already know such as `list`, `set`, `sorted set`, `strings` and `hashes`, . This makes it easy to solve a variety of problems as we know which problem can be handled better by which data type.
+
+**`Operations are atomic`** − All Redis operations are atomic, which ensures that if _two clients concurrently access_, Redis server will receive the updated value.
+
+**`Multi-utility tool`** − Redis is a multi-utility tool and can be used in a number of use cases such as **`caching`**, **`messaging-queues`** (Redis natively supports Publish/Subscribe), **`any short-lived data in your application`**, such as web application sessions, web page hit counts, etc.
+
+
+## Redis Commands
+
+- Start redis
+
+```
+redis-server
+```
+
+- Check If Redis is Working
+
+```
+redis-cli
+
+redis 127.0.0.1:6379> ping 
+PONG
+```
+- Redis configuration settings _(GET)_
+
+```
+redis 127.0.0.1:6379> CONFIG GET <config_setting_name>
+```
+```
+redis 127.0.0.1:6379> CONFIG GET loglevel  
+1) "loglevel" 
+2) "notice"
+```
+- Redis configuration settings _(SET)_
+
+```
+redis 127.0.0.1:6379> CONFIG SET <config_setting_name> <new_config_value>
+```
+```
+redis 127.0.0.1:6379> CONFIG SET loglevel "notice" 
+OK 
+```
+
+#### Redis - Keys
+
+```
+redis 127.0.0.1:6379> SET key value
+OK 
+redis 127.0.0.1:6379> DEL key
+(integer) 1
+```
+
+In the above example, `DEL` is the command. If the key is deleted, then the output of the command will be (integer) 1, otherwise it will be (integer) 0.
+
+#### Redis - Strings
+
+```
+redis 127.0.0.1:6379> SET tutorialspoint redis 
+OK 
+redis 127.0.0.1:6379> GET tutorialspoint 
+"redis" 
+```
+In the above example, SET and GET are the commands, while tutorialspoint is the key.
+
+
+#### Redis - Hashes
+
+Redis Hashes are **`maps between`** the string fields and the string values. Hence, they are the perfect data type to **`represent objects`**. In Redis, every hash can store up to more than 4 billion field-value pairs.
+
+```
+redis 127.0.0.1:6379> HMSET key field value [field value ...]
+```
+
+```
+redis 127.0.0.1:6379> HMSET tutorialspoint name "redis tutorial" 
+description "redis basic commands for caching" likes 20 visitors 23000 
+OK 
+redis 127.0.0.1:6379> HGETALL tutorialspoint  
+1) "name" 
+2) "redis tutorial" 
+3) "description" 
+4) "redis basic commands for caching" 
+5) "likes" 
+6) "20" 
+7) "visitors" 
+8) "23000"
+```
+In the above example, we have set Redis tutorials detail (name, description, likes, visitors) in hash named ‘tutorialspoint’.
+
+
+#### Redis - Lists
+
+Redis Lists are simply lists of strings, **`sorted by insertion order`**. You can add elements in Redis lists in the head or the tail of the list.
+
+```
+redis 127.0.0.1:6379> LPUSH tutorials redis 
+(integer) 1 
+redis 127.0.0.1:6379> LPUSH tutorials mongodb 
+(integer) 2 
+redis 127.0.0.1:6379> LPUSH tutorials mysql 
+(integer) 3 
+redis 127.0.0.1:6379> LRANGE tutorials 0 10  
+1) "mysql" 
+2) "mongodb" 
+3) "redis"
+```
+
+
+#### Redis - Sets
+
+Redis Sets are an **`unordered collection of unique strings`**. Unique means sets does not allow repetition of data in a key.
+
+In Redis set add, remove, and test for the existence of members in O(1) 
+
+```
+redis 127.0.0.1:6379> SADD tutorials redis 
+(integer) 1 
+redis 127.0.0.1:6379> SADD tutorials mongodb 
+(integer) 1 
+redis 127.0.0.1:6379> SADD tutorials mysql 
+(integer) 1 
+redis 127.0.0.1:6379> SADD tutorials mysql 
+(integer) 0 
+redis 127.0.0.1:6379> SMEMBERS tutorials  
+1) "mysql" 
+2) "mongodb" 
+3) "redis"
+```
+In the above example, three values are inserted in Redis set named ‘tutorials’ by the command SADD.
+
+
+#### Redis - Sorted Sets
+
+
+Redis Sorted Sets are **`similar`** to Redis Sets with the unique feature of values stored in a set. The difference is, every member of a **`Sorted Set is associated with a score`**, that is used in order to take the sorted set ordered, from the smallest to the greatest score.
+
+In Redis sorted set, add, remove, and test for the existence of members in O(1) 
+
+```
+redis 127.0.0.1:6379> ZADD key score member [score member ...]
+```
+
+```
+redis 127.0.0.1:6379> ZADD tutorials 1 redis 
+(integer) 1 
+redis 127.0.0.1:6379> ZADD tutorials 2 mongodb 
+(integer) 1 
+redis 127.0.0.1:6379> ZADD tutorials 3 mysql 
+(integer) 1 
+redis 127.0.0.1:6379> ZADD tutorials 3 mysql 
+(integer) 0 
+redis 127.0.0.1:6379> ZADD tutorials 4 mysql 
+(integer) 0 
+redis 127.0.0.1:6379> ZRANGE tutorials 0 10 WITHSCORES  
+1) "redis" 
+2) "1" 
+3) "mongodb" 
+4) "2" 
+5) "mysql" 
+6) "4" 
+```
+
+In the above example, three values are inserted with its score in Redis sorted set named ‘tutorials’ by the command ZADD.
 
 ## Redis Data Replication Process
 
