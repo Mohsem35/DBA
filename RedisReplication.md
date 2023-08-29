@@ -5,6 +5,11 @@ Redis holds its database entirely in the **`memory`**, using the **`disk only fo
 
 Hence Redis is often referred to as a **`data structure server`**. 
 
+Redis is a **`TCP server`** and supports **`request/response protocol`**. In Redis, a request is accomplished with the following steps −
+- The client sends a query to the server, and reads from the socket, usually in a blocking way, for the server response.
+- The server processes the command and sends the response back to the client.
+
+
 ## Features of Redis Data Replication
 
 - **`Asynchronous replication`** is used by Redis, with asynchronous replica-to-master acknowledgments of data processed.
@@ -317,6 +322,111 @@ Following example explains how we can **`get all statistics and information abou
 ```
 redis 127.0.0.1:6379> INFO  
 ```
+
+## Redis Backup & Restore
+
+Redis `SAVE` command is used to create a backup of the current Redis database.
+
+```
+127.0.0.1:6379> SAVE  
+OK
+```
+
+This command will create a `dump.rdb` file in your Redis directory.
+
+
+#### Restore Redis Data
+
+To restore Redis data, move Redis backup file (dump.rdb) into your Redis directory and start the server. To get your Redis directory, use CONFIG command of Redis as shown below.
+
+```
+127.0.0.1:6379> CONFIG get dir  
+1) "dir" 
+2) "/var/lib/redis" 
+```
+
+In the output of the above command `/var/lib/redis` is the directory, where Redis server data is stored.
+
+
+`/etc/redis` is the redis configuration directory, where the file name is **`redis.conf`**
+
+#### Bgsave
+
+To create Redis backup, an alternate command `BGSAVE` is also available. This command will start the **`backup process and run this in the background`**.
+
+```
+127.0.0.1:6379> BGSAVE  
+Background saving started
+```
+
+## Redis - Security
+  
+
+Redis database can be secured, such that any client making a connection needs to authenticate before executing a command. To secure Redis, you need to set the password in the config file.
+
+Following example shows the steps to secure your Redis instance.
+
+```
+127.0.0.1:6379> CONFIG get requirepass 
+1) "requirepass" 
+2) ""
+```
+
+By default, this property is blank, which means no password is set for this instance. You can change this property by executing the following command.
+
+
+## Redis config parameters that we should know
+
+```
+sudo vim /etc/redis/redis.conf
+```
+
+```
+maxclients 10000          # Max number of connected clients at the same time
+```
+
+
+Redis - Partitioning
+Previous Page
+Next Page  
+
+
+
+
+#### Set password
+```
+127.0.0.1:6379> CONFIG set requirepass "password" 
+OK 
+127.0.0.1:6379> CONFIG get requirepass 
+1) "requirepass" 
+2) "password" 
+```
+
+After setting the password, if any client _runs the command without authentication_, then _(error) NOAUTH Authentication required_. error will return. 
+
+Hence, the client needs to use `AUTH` command to **`authenticate himself`**.
+
+```
+127.0.0.1:6379> AUTH <password>
+```
+
+```
+127.0.0.1:6379> AUTH "tutorialspoint" 
+OK 
+127.0.0.1:6379> SET mykey "Test value" 
+OK 
+127.0.0.1:6379> GET mykey 
+"Test value"
+```
+
+### Redis Partitioning:
+
+Redis Partitioning: is the process of splitting your data into multiple Redis instances, so that every instance will only contain a subset of your keys.
+
+- **`Range`** partitioning is accomplished by mapping ranges of objects into specific Redis instances. Suppose in our example, the users from ID 0 to ID 10000 will go into instance R0, while the users from **`ID 10001 to ID 20000`** will go into instance R1 and so forth.
+  
+- **`Hash`** Partitioning is a **`hash function`** (eg. modulus function) is used to convert the **`key into a number`** and then the data is stored in different-different Redis instances.
+
 
 ## Redis Data Replication Process
 
