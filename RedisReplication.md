@@ -207,8 +207,116 @@ redis 127.0.0.1:6379> PFCOUNT tutorials
 
 #### Redis - Publish Subscribe 
 
-Redis Pub/Sub implements the **`messaging system`** where the senders (in redis terminology called publishers) sends the messages while the receivers (subscribers) receive them. The link by which the messages are transferred is called **`channel`**.
+Redis Pub/Sub implements the **`messaging system`** where the senders (in redis terminology called **`publishers`**) sends the messages while the receivers (**`subscribers`**) receive them. The link by which the messages are transferred is called **`channel`**.
 
+In Redis, a client can subscribe any number of channels.
+
+In the following example, one client subscribes a channel named ‘redisChat’.
+```
+redis 127.0.0.1:6379> SUBSCRIBE redisChat  
+Reading messages... (press Ctrl-C to quit) 
+1) "subscribe" 
+2) "redisChat" 
+3) (integer) 1 
+```
+
+Now, two clients are publishing the messages on the same channel named ‘redisChat’ and the above subscribed client is receiving messages.
+
+```
+redis 127.0.0.1:6379> PUBLISH redisChat "Redis is a great caching technique"  
+(integer) 1  
+redis 127.0.0.1:6379> PUBLISH redisChat "Learn redis by tutorials point"  
+(integer) 1   
+1) "message" 
+2) "redisChat" 
+3) "Redis is a great caching technique" 
+1) "message" 
+2) "redisChat" 
+3) "Learn redis by tutorials point" 
+```
+
+#### Redis - Transactions
+
+
+Redis transactions allow the **`execution`** of a _group of commands in a single step_. Following are the two properties of Transactions.
+
+- All commands in a transaction are sequentially executed as a single isolated operation. It is not possible that a request issued by another client is served in the middle of the execution of a Redis transaction.
+- Redis transaction is also atomic. Atomic means **`either all of the commands or none are processed`**
+
+
+Redis transaction is initiated by command `MULTI` and then you need to _pass a list of commands that should be executed in the transaction_, after which the entire transaction is executed by `EXEC` command.
+
+```
+redis 127.0.0.1:6379> MULTI 
+OK 
+List of commands here 
+redis 127.0.0.1:6379> EXEC
+```
+```
+redis 127.0.0.1:6379> MULTI 
+OK 
+redis 127.0.0.1:6379> SET tutorial redis 
+QUEUED 
+redis 127.0.0.1:6379> GET tutorial 
+QUEUED 
+redis 127.0.0.1:6379> INCR visitors 
+QUEUED 
+redis 127.0.0.1:6379> EXEC  
+1) OK 
+2) "redis" 
+3) (integer) 1 
+```
+
+
+#### Redis - Scripting
+
+Redis scripting is used to evaluate scripts using the Lua interpreter. It is built into Redis starting from version 2.6.0. The command used for scripting is `EVAL` command.
+
+Following is the basic syntax of EVAL command.
+
+```
+redis 127.0.0.1:6379> EVAL script numkeys key [key ...] arg [arg ...]
+```
+```
+redis 127.0.0.1:6379> EVAL "return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}" 2 key1 
+key2 first second  
+1) "key1" 
+2) "key2" 
+3) "first" 
+4) "second"
+```
+
+```
+# understanding the EVAL with values
+"return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}" = script
+2 = numkeys
+key1, key2 = key
+first, second = arg
+```
+
+
+#### Redis - Connections
+
+Redis connection commands are basically used to manage client connections with Redis server.
+
+Following example explains how a client authenticates itself to Redis server and checks whether the server is running or not.
+
+```
+redis 127.0.0.1:6379> AUTH "password" 
+OK 
+redis 127.0.0.1:6379> PING 
+PONG
+```
+
+#### Redis - Server
+
+Redis server commands are basically used to manage Redis server.
+
+Following example explains how we can **`get all statistics and information about the server`**
+
+```
+redis 127.0.0.1:6379> INFO  
+```
 
 ## Redis Data Replication Process
 
