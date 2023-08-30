@@ -43,7 +43,32 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 redis-server
 ```
 
-- Check If Redis is Working
+- Check the Redis version
+
+```
+redis-server -v
+```
+
+- Check Redis server status
+
+```
+/etc/init.d/redis-server status
+```
+
+```
+/etc/init.d/redis-server stop
+/etc/init.d/redis-server start
+/etc/init.d/redis-server restart
+```
+
+
+- Connect with remote Redis server
+
+```
+redis-cli -h 10.0.0.1 -p 6379 -a password
+```
+
+- Check if Redis is working
 
 ```
 redis-cli
@@ -51,6 +76,33 @@ redis-cli
 redis 127.0.0.1:6379> ping 
 PONG
 ```
+
+- List all databases in Redis
+
+```
+redis-cli INFO keyspace
+```
+
+Empty a Redis database
+
+```
+redis-cli -n 8 flushdb              # deletes specific db8
+```
+```
+redis-cli flushall                  # deletes all dbs
+```
+
+- Redis user list
+
+```
+redis-cli
+127.0.0.1:6379> ACL USERS
+1) "default"
+127.0.0.1:6379> ACL WHOAMI
+"default"
+```
+
+
 - Redis configuration settings _(GET)_
 
 ```
@@ -70,6 +122,9 @@ redis 127.0.0.1:6379> CONFIG SET <config_setting_name> <new_config_value>
 redis 127.0.0.1:6379> CONFIG SET loglevel "notice" 
 OK 
 ```
+
+## Redis data types
+
 
 #### Redis - Keys
 
@@ -345,10 +400,13 @@ To restore Redis data, move Redis backup file (dump.rdb) into your Redis directo
 2) "/var/lib/redis" 
 ```
 
-In the output of the above command `/var/lib/redis` is the directory, where Redis server data is stored.
-
+In the output of the above command `/var/lib/redis` is the _resis data directory_
 
 `/etc/redis` is the redis configuration directory, where the file name is **`redis.conf`**
+
+
+The SAVE commands performs a _synchronous save of the dataset producing a point in time snapshot_ of all the data inside the Redis instance, in the form of an RDB file. You almost **`never`** want to call SAVE in **`production`** environments where it will block all the other clients. Instead usually **`BGSAVE`** is used
+
 
 #### Bgsave
 
