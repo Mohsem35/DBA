@@ -67,6 +67,25 @@ redis-server -v
 ```
 redis-cli -h 10.0.0.1 -p 6379 -a password
 ```
+- Redis data directory
+
+```
+127.0.0.1:6379> CONFIG get dir  
+1) "dir" 
+2) "/var/lib/redis" 
+```
+
+`/etc/redis` is the redis _configuration directory_, where the file name is **`redis.conf`**
+
+
+```
+redis-cli -u rediss://<username>:<password>@<hostname>:<port> ping
+```
+
+```
+redis-cli -u rediss://default:password@172.16.6.18:6379 ping
+```
+
 
 - Check if Redis is working
 
@@ -83,7 +102,7 @@ PONG
 redis-cli INFO keyspace
 ```
 
-Empty a Redis database
+- Empty a Redis database
 
 ```
 redis-cli -n 8 flushdb              # deletes specific db8
@@ -390,21 +409,6 @@ OK
 This command will create a `dump.rdb` file in your Redis directory.
 
 
-#### Restore Redis Data
-
-To restore Redis data, move Redis backup file (dump.rdb) into your Redis directory and start the server. To get your Redis directory, use CONFIG command of Redis as shown below.
-
-```
-127.0.0.1:6379> CONFIG get dir  
-1) "dir" 
-2) "/var/lib/redis" 
-```
-
-In the output of the above command `/var/lib/redis` is the _resis data directory_
-
-`/etc/redis` is the redis configuration directory, where the file name is **`redis.conf`**
-
-
 The SAVE commands performs a _synchronous save of the dataset producing a point in time snapshot_ of all the data inside the Redis instance, in the form of an RDB file. You almost **`never`** want to call SAVE in **`production`** environments where it will block all the other clients. Instead usually **`BGSAVE`** is used
 
 
@@ -416,6 +420,37 @@ To create Redis backup, an alternate command `BGSAVE` is also available. This co
 127.0.0.1:6379> BGSAVE  
 Background saving started
 ```
+
+
+#### Restore Redis Data
+
+To restore Redis data, 
+
+step 1: Move Redis backup file (dump.rdb) into your reomte Redis server directory
+
+```
+scp /var/lib/redis/dump.rdb hostname@ip:/home/ubuntu
+```
+
+step 2: Stop the server.
+
+```
+/etc/init.d/redis-server stop
+```
+
+step 3: Move the `dump.rdb` to redis data directory
+
+```
+mv /home/ubuntu/dump.rdb /var/lib/redis 
+```
+
+step 4: Start redis
+
+```
+redis-server
+```
+
+
 
 ## Redis - Security
   
