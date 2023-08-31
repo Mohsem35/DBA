@@ -51,14 +51,11 @@ redis-server -v
 
 - Check Redis server status
 
-```
-/etc/init.d/redis-server status
-```
 
 ```
-/etc/init.d/redis-server stop
-/etc/init.d/redis-server start
-/etc/init.d/redis-server restart
+sudo systemctl status redis-server.service
+sudo systemctl start redis-server.service
+systemctl stop redis-server.service
 ```
 
 
