@@ -545,6 +545,61 @@ resynchronization occurs: the replica will receive a fresh copy of the dataset.
 
 ![ezgif com-webp-to-jpg](https://github.com/Mohsem35/DBA/assets/58659448/870b21e6-8fdc-44e8-9c8f-58e46b0728e6)
 
+### Replication Setup
+
+
+
+#### Configuring Redis Master Server(172.16.6.18)
+
+```bash
+sudo vim /etc/redis/redis.conf
+```
+
+By default, Redis is configured to **`listen and accept`** connections on the **`loopback interface`** using the **`bind`** directive.
+
+
+- To enable communication between replicas, the _master_ should be configured to _listen IPv4 loopback address and its OWN LAN IP address 172.16.6.18_
+- For _secure communications_, we can protect the master using the **`requirepass`** directive, so that the clients/replicas request an authentication password before running any commands.
+- We then configure _Redis to interact with systemd_. To do this, the **`supervised`** parameter needs to be added
+
+
+
+```
+bind 127.0.0.1 172.16.6.18 -::1
+requirepass DLT@DevOps44
+protected-mode no
+supervised systemd
+```
+
+Once this is done, save the file and close it. Restart the Redis service for the changes to take effect.
+```
+systemctl daemon-reload
+systemctl restart redis
+```
+
+#### Configuring Redis' Replica servers(172.16.6.57)
+
+On the replica servers, we need to configure in the **`same way`** we did for the master. Add the respective IPv4 address in the bind directive on both the replica servers.
+
+On 1st replica server
+
+```
+bind 127.0.0.1 172.16.6.57 -::1
+```
+Now, we set up our Redis instance as a replica
+
+In order to configure the Redis instance as a **`replica`**, we can use the **`replicaof`** parameter and set the master node's IP and port to identify the master and enable communication.
+- authentication on the replica nodes will use the **`masterauth`** parameter
+
+```
+replicaof 172.16.6.18 6379
+masterauth DLT@DevOps44
+```
+```
+sudo systemctl restart redis
+```
+
+#### Verifying master-replica status
 
 
 ### What is Redis Data Replication ID?
