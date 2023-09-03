@@ -99,7 +99,7 @@ PONG
 redis-cli INFO keyspace
 ```
 
-- Empty a Redis database
+- Delete/Empty a Redis database
 
 ```
 redis-cli -n 8 flushdb              # deletes specific db8
@@ -624,4 +624,4 @@ There are two Redis commands that provide a wealth of information about the mast
 
 **`ROLE`**: is a more computer-friendly command that displays the **`replication status of masters and replicas`**, as well as replication offsets, a list of linked replicas, and so on.
 
-
+[Another approach for Redis Replication](https://developer.redis.com/operate/redis-at-scale/high-availability/exercise-1)
