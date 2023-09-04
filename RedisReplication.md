@@ -55,7 +55,7 @@ redis-server -v
 ```
 sudo systemctl status redis-server.service
 sudo systemctl start redis-server.service
-systemctl stop redis-server.service
+sudo systemctl stop redis-server.service
 ```
 
 
@@ -432,7 +432,7 @@ scp /var/lib/redis/dump.rdb hostname@ip:/home/ubuntu
 step 2: Stop the server.
 
 ```
-/etc/init.d/redis-server stop
+sudo systemctl stop redis-server.service
 ```
 
 step 3: Move the `dump.rdb` to redis data directory
