@@ -10,7 +10,7 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 - The server processes the command and sends the response back to the client.
 
 
-[Redis Commands](Redis_Commands)
+[Redis Commands](https://github.com/Mohsem35/DBA/blob/main/RedisReplication.md#redis_commands)
 
 
 ## Features of Redis Data Replication
