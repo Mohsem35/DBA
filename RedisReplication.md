@@ -10,7 +10,9 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 - The server processes the command and sends the response back to the client.
 
 
-[Redis Commands](https://github.com/Mohsem35/DBA/blob/main/RedisReplication.md#redis_commands)
+[Redis Commands](#redis-commands)
+
+[Redis Backup Restore](#redis-backup-restore)
 
 
 ## Features of Redis Data Replication
@@ -38,7 +40,7 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 **`Multi-utility tool`** − Redis is a multi-utility tool and can be used in a number of use cases such as **`caching`**, **`messaging-queues`** (Redis natively supports Publish/Subscribe), **`any short-lived data in your application`**, such as web application sessions, web page hit counts, etc.
 
 
-## Redis_Commands
+## Redis Commands
 
 - Start redis
 
@@ -412,7 +414,7 @@ Following example explains how we can **`get all statistics and information abou
 redis 127.0.0.1:6379> INFO  
 ```
 
-## Redis Backup & Restore
+## Redis Backup Restore
 
 Redis `SAVE` command is used to create a backup of the current Redis database.
 
