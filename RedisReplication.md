@@ -10,6 +10,9 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 - The server processes the command and sends the response back to the client.
 
 
+[Redis Commands](Redis_Commands)
+
+
 ## Features of Redis Data Replication
 
 - **`Asynchronous replication`** is used by Redis, with asynchronous replica-to-master acknowledgments of data processed.
@@ -35,7 +38,7 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 **`Multi-utility tool`** − Redis is a multi-utility tool and can be used in a number of use cases such as **`caching`**, **`messaging-queues`** (Redis natively supports Publish/Subscribe), **`any short-lived data in your application`**, such as web application sessions, web page hit counts, etc.
 
 
-## Redis Commands
+## Redis_Commands
 
 - Start redis
 
@@ -138,6 +141,21 @@ redis 127.0.0.1:6379> CONFIG SET <config_setting_name> <new_config_value>
 redis 127.0.0.1:6379> CONFIG SET loglevel "notice" 
 OK 
 ```
+
+- Connect redis from GUI tools
+
+```
+vim /etc/redis/redis.conf
+```
+```
+bind 127.0.0.1 <OWN_LAN_IP> -::1
+protected-mode no
+```
+```
+systemctl start redis-server.service
+systemctl daemon-reload
+```
+
 
 ## Redis data types
 
