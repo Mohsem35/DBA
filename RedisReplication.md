@@ -14,6 +14,8 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 
 [Redis Backup Restore](#redis-backup-restore)
 
+[Redis Replication](#replication-setup)
+
 
 ## Features of Redis Data Replication
 
