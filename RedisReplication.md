@@ -457,10 +457,15 @@ step 2: Stop the server.
 sudo systemctl stop redis-server.service
 ```
 
-step 3: Move the `dump.rdb` to redis data directory
+step 3: Find out the redis data directory and move the `dump.rdb` dump that directory
 
 ```
-mv /home/ubuntu/dump.rdb /var/lib/redis 
+127.0.0.1:6379> CONFIG get dir  
+1) "dir" 
+2) "/var/lib/redis" 
+```
+```
+mv /home/ubuntu/dump.rdb /redis/data/directory 
 ```
 
 step 4: Start redis
@@ -647,3 +652,6 @@ There are two Redis commands that provide a wealth of information about the mast
 **`ROLE`**: is a more computer-friendly command that displays the **`replication status of masters and replicas`**, as well as replication offsets, a list of linked replicas, and so on.
 
 [Another approach for Redis Replication](https://developer.redis.com/operate/redis-at-scale/high-availability/exercise-1)
+
+
+[Redis Replication](https://medium.com/dlt-labs-publication/how-to-setup-redis-replication-c9cc89ba6c03#id_token=eyJhbGciOiJSUzI1NiIsImtpZCI6IjgzOGMwNmM2MjA0NmMyZDk0OGFmZmUxMzdkZDUzMTAxMjlmNGQ1ZDEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIyMTYyOTYwMzU4MzQtazFrNnFlMDYwczJ0cDJhMmphbTRsamRjbXMwMHN0dGcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIyMTYyOTYwMzU4MzQtazFrNnFlMDYwczJ0cDJhMmphbTRsamRjbXMwMHN0dGcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDE2MjQ3Mzk5MzU4MTQ2MjkyMTMiLCJoZCI6ImNlbGxvc2NvLnBlIiwiZW1haWwiOiJtYWx5Lm1vaHNlbUBjZWxsb3Njby5wZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYmYiOjE2OTQwNjk3ODIsIm5hbWUiOiJNYWx5IE1vaHNlbSBBaG1lZCIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQWNIVHRkcUpPZ0M1dnBRa2M0OW1tUDN6c3FSTFZBNTJ1UW5HeERNeW1OU3ZQQTdJZz1zOTYtYyIsImdpdmVuX25hbWUiOiJNYWx5IE1vaHNlbSIsImZhbWlseV9uYW1lIjoiQWhtZWQiLCJsb2NhbGUiOiJlbiIsImlhdCI6MTY5NDA3MDA4MiwiZXhwIjoxNjk0MDczNjgyLCJqdGkiOiJmNzlhODY1ZjgxMzRhYjU3MWRlNDRhOTZlODliYmQ0YmFhNTgwOGNhIn0.MICVLgxNyUSLXD8tuygg_MmDgj83LGIxq9LU-J0d2ubV_TE9BMT8PJEKPMFlle9ZT2yYl2ngxHdVD3-sz4XW1l6jAva15rk3yNwtDpiLJJ-3JFpvmTW9Zxeoy_0f8nwsgTrk45ex1RXgjpskujh5QCd4UEiD4_wMsb3GZl82zck3RLI_-d5NHWyOmIfhUgNlnXsbEmTH2EAqRisjaB2KRnAHCcxmyHaWCqJCpemj-yRNPndApFDkQk_gKkE74SNrUlUpXA0ALVcW-I-fnEX3vY9yZYB6uPJ5B3Gmv4FTjdatfwuiqr5skHjAWQnJ3iCz7Spzv1kWgUdbz5jccQdH8A)
