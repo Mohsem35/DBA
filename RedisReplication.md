@@ -17,6 +17,7 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 - [Redis Publish Subscribe](#redis-publish-subscribe)
 - [Redis Backup Restore](#redis-backup-restore)
 - [Redis Replication](#replication-setup)
+- [Redis Security](#redis-security)
 
 
 ## Redis Advantages
@@ -54,24 +55,6 @@ Redis server v=7.2.1 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=95712a67
 ```
 redis-cli
 redis 127.0.0.1:6379> ping 
-PONG
-```
-
-#### Redis Authentication
-
-Redis database can be secured, such that any client making a connection needs to authenticate before executing a command. To secure Redis, you need to set the password in the config file. Following example explains how a client authenticates itself to Redis server and checks whether the server is running or not.
-
-```
-127.0.0.1:6379> CONFIG get requirepass 
-1) "requirepass" 
-2) ""
-```
-By default, this property is blank, which means no password is set for this instance. You can change this property by executing the following command.
-
-```
-redis 127.0.0.1:6379> AUTH "password" 
-OK 
-redis 127.0.0.1:6379> PING 
 PONG
 ```
 
@@ -161,6 +144,37 @@ protected-mode no
 systemctl stop redis-server.service
 systemctl daemon-reload
 redis-server
+```
+
+
+## Redis Security
+
+Redis database can be secured, such that any client making a connection needs to authenticate before executing a command. To secure Redis, you need to set the password in the config file. Following example explains how a client authenticates itself to Redis server and checks whether the server is running or not.
+
+
+#### Set password
+
+```
+127.0.0.1:6379> CONFIG get requirepass 
+1) "requirepass" 
+2) ""
+```
+By default, this property is blank, which means no password is set for this instance. You can change this property by executing the following command.
+
+```
+127.0.0.1:6379> CONFIG set requirepass "password" 
+OK 
+127.0.0.1:6379> CONFIG get requirepass 
+1) "requirepass" 
+2) "password" 
+```
+After setting the password, if any client _runs the command without authentication_, then _(error) NOAUTH Authentication required_. error will return. Hence, the client needs to use `AUTH` command to **`authenticate himself`**.
+
+```
+redis 127.0.0.1:6379> AUTH "password" 
+OK 
+redis 127.0.0.1:6379> PING 
+PONG
 ```
 
 
@@ -396,8 +410,6 @@ first, second = arg
 ```
 
 
-
-
 #### Redis - Server
 
 Redis server commands are basically used to manage Redis server.
@@ -410,47 +422,35 @@ redis 127.0.0.1:6379> INFO
 
 ## Redis Backup Restore
 
-Redis `SAVE` command is used to create a backup of the current Redis database.
+Step 1: Redis `SAVE` command is used to create a **`backup`** of the current Redis database.
 
 ```
 127.0.0.1:6379> SAVE  
 OK
 ```
 
-This command will create a `dump.rdb` file in your Redis directory.
+This command will create a **`dump.rdb`** file in your Redis directory.
 
-> **_NOTE:_**  dump file name can be changed. 
-
-The SAVE commands performs a _synchronous save of the dataset producing a point in time snapshot_ of all the data inside the Redis instance, in the form of an RDB file. You almost **`never`** want to call SAVE in **`production`** environments where it will block all the other clients. Instead usually **`BGSAVE`** is used
-
-
-#### Bgsave
-
-To create Redis backup, an alternate command `BGSAVE` is also available. This command will start the **`backup process and run this in the background`**.
+The SAVE commands performs a _synchronous save of the dataset producing a point in time snapshot_ of all the data inside the Redis instance, in the form of an RDB file. You almost **`never`** want to call SAVE in **`production`** environments where it will **`block`** all the other clients. Instead usually **`BGSAVE`** is used. This command will start the backup process and run this in the **`background`**.
 
 ```
 127.0.0.1:6379> BGSAVE  
 Background saving started
 ```
 
-
-#### Restore Redis Data
-
-To restore Redis data, 
-
-step 1: Move Redis backup file (dump.rdb) into your reomte Redis server directory
+step 2: To **`restore`** Redis data, move Redis backup file (dump.rdb) into your reomte Redis server directory
 
 ```
 scp /var/lib/redis/dump.rdb hostname@ip:/home/ubuntu
 ```
 
-step 2: Stop the server.
+step 2: Stop the restore serve 
 
 ```
 sudo systemctl stop redis-server.service
 ```
 
-step 3: Find out the redis data directory and move the `dump.rdb` dump that directory
+step 3: Find out the restore server redis data directory and move the `dump.rdb` dump to that directory
 
 ```
 127.0.0.1:6379> CONFIG get dir  
@@ -461,7 +461,7 @@ step 3: Find out the redis data directory and move the `dump.rdb` dump that dire
 mv /home/ubuntu/dump.rdb /redis/data/directory 
 ```
 
-step 4: Start redis
+step 4: Start deamon and redis 
 
 ```
 redis-server
@@ -480,32 +480,6 @@ bind 127.0.0.1 10.0.0.1 ::1                # Listens on specific IPv4 addresses 
 protected-mode no                          # Clients from other hosts to connect to Redis
 logfile /var/log/redis/redis-server.log  
 dbfilename dump.rdb                        # Dump file name
-```
-
-#### Set password
-```
-127.0.0.1:6379> CONFIG set requirepass "password" 
-OK 
-127.0.0.1:6379> CONFIG get requirepass 
-1) "requirepass" 
-2) "password" 
-```
-
-After setting the password, if any client _runs the command without authentication_, then _(error) NOAUTH Authentication required_. error will return. 
-
-Hence, the client needs to use `AUTH` command to **`authenticate himself`**.
-
-```
-127.0.0.1:6379> AUTH <password>
-```
-
-```
-127.0.0.1:6379> AUTH "tutorialspoint" 
-OK 
-127.0.0.1:6379> SET mykey "Test value" 
-OK 
-127.0.0.1:6379> GET mykey 
-"Test value"
 ```
 
 ### Redis Partitioning:
