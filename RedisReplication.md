@@ -9,69 +9,87 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 - The client sends a query to the server, and reads from the socket, usually in a blocking way, for the server response.
 - The server processes the command and sends the response back to the client.
 
+### Contents
 
-[Redis Commands](#redis-commands)
+- [Redis Advantages](#redis-advantages)
+- [Redis Commands](#redis-commands)
+- [Redis Data Types](#redis-data-types)
+- [Redis Publish Subscribe](#redis-publish-subscribe)
+- [Redis Backup Restore](#redis-backup-restore)
+- [Redis Replication](#replication-setup)
 
-[Redis Backup Restore](#redis-backup-restore)
-
-[Redis Replication](#replication-setup)
-
-
-## Features of Redis Data Replication
-
-- **`Asynchronous replication`** is used by Redis, with asynchronous replica-to-master acknowledgments of data processed.
-- **`Multiple replicas`** are possible for a master.
-- Connections from other replicas can be accepted by replicas. Aside from linking several replicas to the same master, replicas can also be linked to each other
-  in a cascading pattern. Since Redis 4.0, the master sends the identical Redis data replication stream to all sub-replicas.
-- On the master side, **`Redis data replication is non-blocking`**. When one or more replicas execute the initial synchronization or partial resynchronization,
-  the **`master`** will continue to **`handle queries`**.
-- Redis Data Replication can be used for scalabilities, such as having **`several replicas for read-only queries`** (slow O(N) operations can be offloaded to replicas)
-  or just to improve data safety and availability.
-- You can use Redis data replication to avoid the cost of the master writing the entire dataset to disc: a standard strategy involves configuring your master
-  redis.conf to avoid persisting at all, then connecting a replica configured to save periodically or with AOF enabled. This setup, however, must be treated with
-  caution because a restarted master will start with an empty dataset, and if the replica attempts to sync with it, the replica will be emptied as well.
 
 ## Redis Advantages
 
-**`Exceptionally fast`** − Redis is very fast and can perform about _110000 SETs_/second, about _81000 GETs_/second.
+**1. `Exceptionally fast`** − Redis is very fast and can perform about _110000 SETs_/second, about _81000 GETs_/second.
 
-**`Supports rich data types`** − Redis natively supports most of the datatypes that developers already know such as `list`, `set`, `sorted set`, `strings` and `hashes`, . This makes it easy to solve a variety of problems as we know which problem can be handled better by which data type.
+**2. `Supports rich data types`** − Redis natively supports most of the datatypes that developers already know such as `list`, `set`, `sorted set`, `strings` and `hashes`, . This makes it easy to solve a variety of problems as we know which problem can be handled better by which data type.
 
-**`Operations are atomic`** − All Redis operations are atomic, which ensures that if _two clients concurrently access_, Redis server will receive the updated value.
+**3. `Operations are atomic`** − All Redis operations are atomic, which ensures that if _two clients concurrently access_, Redis server will receive the updated value.
 
-**`Multi-utility tool`** − Redis is a multi-utility tool and can be used in a number of use cases such as **`caching`**, **`messaging-queues`** (Redis natively supports Publish/Subscribe), **`any short-lived data in your application`**, such as web application sessions, web page hit counts, etc.
+**4. `Multi-utility tool`** − Redis is a multi-utility tool and can be used in a number of use cases such as **`caching`**, **`messaging-queues`** (Redis natively supports Publish/Subscribe), **`any short-lived data in your application`**, such as web application sessions, web page hit counts, etc.
+
+
+[Install Redis on Linux](https://redis.io/docs/getting-started/installation/install-redis-on-linux/)
 
 
 ## Redis Commands
 
-- Start redis
+#### Start redis
 
 ```
 redis-server
 ```
 
-- Check the Redis version
+#### Redis version
 
 ```
 redis-server -v
+Redis server v=7.2.1 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=95712a67f5005c28
 ```
 
-- Check Redis server status
+
+#### Check if Redis is working
+
+```
+redis-cli
+redis 127.0.0.1:6379> ping 
+PONG
+```
+
+#### Redis Authentication
+
+Redis database can be secured, such that any client making a connection needs to authenticate before executing a command. To secure Redis, you need to set the password in the config file. Following example explains how a client authenticates itself to Redis server and checks whether the server is running or not.
+
+```
+127.0.0.1:6379> CONFIG get requirepass 
+1) "requirepass" 
+2) ""
+```
+By default, this property is blank, which means no password is set for this instance. You can change this property by executing the following command.
+
+```
+redis 127.0.0.1:6379> AUTH "password" 
+OK 
+redis 127.0.0.1:6379> PING 
+PONG
+```
+
+#### Redis server status
 
 
 ```
 sudo systemctl status redis-server.service
-sudo systemctl start redis-server.service
-sudo systemctl stop redis-server.service
 ```
 
 
-- Connect with remote Redis server
+#### Connect with remote Redis server
 
 ```
 redis-cli -h 10.0.0.1 -p 6379 -a password
 ```
-- Redis data directory
+
+#### Redis data directory
 
 ```
 127.0.0.1:6379> CONFIG get dir  
@@ -82,31 +100,13 @@ redis-cli -h 10.0.0.1 -p 6379 -a password
 `/etc/redis` is the redis _configuration directory_, where the file name is **`redis.conf`**
 
 
-```
-redis-cli -u rediss://<username>:<password>@<hostname>:<port> ping
-```
-
-```
-redis-cli -u rediss://default:password@172.16.6.18:6379 ping
-```
-
-
-- Check if Redis is working
-
-```
-redis-cli
-
-redis 127.0.0.1:6379> ping 
-PONG
-```
-
-- List all databases in Redis
+#### List all databases in Redis
 
 ```
 redis-cli INFO keyspace
 ```
 
-- Delete/Empty a Redis database
+#### Delete/Empty a Redis database
 
 ```
 redis-cli -n 8 flushdb              # deletes specific db8
@@ -115,7 +115,7 @@ redis-cli -n 8 flushdb              # deletes specific db8
 redis-cli flushall                  # deletes all dbs
 ```
 
-- Redis user list
+#### Redis user list
 
 ```
 redis-cli
@@ -126,7 +126,7 @@ redis-cli
 ```
 
 
-- Redis configuration settings _(GET)_
+#### Redis configuration settings _(GET)_
 
 ```
 redis 127.0.0.1:6379> CONFIG GET <config_setting_name>
@@ -146,22 +146,25 @@ redis 127.0.0.1:6379> CONFIG SET loglevel "notice"
 OK 
 ```
 
-- Connect redis from GUI tools
+
+
+#### Connect redis from GUI tools
 
 ```
 vim /etc/redis/redis.conf
 ```
 ```
-bind 127.0.0.1 <OWN_LAN_IP> -::1
+bind 127.0.0.1 <own_lan_ip> ::1
 protected-mode no
 ```
 ```
-systemctl start redis-server.service
+systemctl stop redis-server.service
 systemctl daemon-reload
+redis-server
 ```
 
 
-## Redis data types
+## Redis Data Types
 
 
 #### Redis - Keys
@@ -303,7 +306,7 @@ redis 127.0.0.1:6379> PFCOUNT tutorials
 (integer) 3 
 ```
 
-#### Redis - Publish Subscribe 
+## Redis Publish Subscribe 
 
 Redis Pub/Sub implements the **`messaging system`** where the senders (in redis terminology called **`publishers`**) sends the messages while the receivers (**`subscribers`**) receive them. The link by which the messages are transferred is called **`channel`**.
 
@@ -393,18 +396,7 @@ first, second = arg
 ```
 
 
-#### Redis - Connections
 
-Redis connection commands are basically used to manage client connections with Redis server.
-
-Following example explains how a client authenticates itself to Redis server and checks whether the server is running or not.
-
-```
-redis 127.0.0.1:6379> AUTH "password" 
-OK 
-redis 127.0.0.1:6379> PING 
-PONG
-```
 
 #### Redis - Server
 
@@ -427,6 +419,7 @@ OK
 
 This command will create a `dump.rdb` file in your Redis directory.
 
+> **_NOTE:_**  dump file name can be changed. 
 
 The SAVE commands performs a _synchronous save of the dataset producing a point in time snapshot_ of all the data inside the Redis instance, in the form of an RDB file. You almost **`never`** want to call SAVE in **`production`** environments where it will block all the other clients. Instead usually **`BGSAVE`** is used
 
@@ -475,40 +468,19 @@ redis-server
 ```
 
 
-
-## Redis - Security
-  
-
-Redis database can be secured, such that any client making a connection needs to authenticate before executing a command. To secure Redis, you need to set the password in the config file.
-
-Following example shows the steps to secure your Redis instance.
-
-```
-127.0.0.1:6379> CONFIG get requirepass 
-1) "requirepass" 
-2) ""
-```
-
-By default, this property is blank, which means no password is set for this instance. You can change this property by executing the following command.
-
-
-## Redis config parameters that we should know
+## Redis configuration parameters that we should know
 
 ```
 sudo vim /etc/redis/redis.conf
 ```
 
 ```
-maxclients 10000          # Max number of connected clients at the same time
+maxclients 10000                           # Max number of connected clients at the same time
+bind 127.0.0.1 10.0.0.1 ::1                # Listens on specific IPv4 addresses with IPv6
+protected-mode no                          # Clients from other hosts to connect to Redis
+logfile /var/log/redis/redis-server.log  
+dbfilename dump.rdb                        # Dump file name
 ```
-
-
-Redis - Partitioning
-Previous Page
-Next Page  
-
-
-
 
 #### Set password
 ```
@@ -545,7 +517,23 @@ Redis Partitioning: is the process of splitting your data into multiple Redis in
 - **`Hash`** Partitioning is a **`hash function`** (eg. modulus function) is used to convert the **`key into a number`** and then the data is stored in different-different Redis instances.
 
 
-## Redis Data Replication Process
+## Redis Data Replication
+
+
+
+### Features of Redis Data Replication
+
+- **`Asynchronous replication`** is used by Redis, with asynchronous replica-to-master acknowledgments of data processed.
+- **`Multiple replicas`** are possible for a master.
+- Connections from other replicas can be accepted by replicas. Aside from linking several replicas to the same master, replicas can also be linked to each other
+  in a cascading pattern. Since Redis 4.0, the master sends the identical Redis data replication stream to all sub-replicas.
+- On the master side, **`Redis data replication is non-blocking`**. When one or more replicas execute the initial synchronization or partial resynchronization,
+  the **`master`** will continue to **`handle queries`**.
+- Redis Data Replication can be used for scalabilities, such as having **`several replicas for read-only queries`** (slow O(N) operations can be offloaded to replicas)
+  or just to improve data safety and availability.
+- You can use Redis data replication to avoid the cost of the master writing the entire dataset to disc: a standard strategy involves configuring your master
+  redis.conf to avoid persisting at all, then connecting a replica configured to save periodically or with AOF enabled. This setup, however, must be treated with
+  caution because a restarted master will start with an empty dataset, and if the replica attempts to sync with it, the replica will be emptied as well.
 
 
 ### How Redis Data Replication Works?
