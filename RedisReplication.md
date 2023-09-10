@@ -444,13 +444,13 @@ step 2: To **`restore`** Redis data, move Redis backup file (dump.rdb) into your
 scp /var/lib/redis/dump.rdb hostname@ip:/home/ubuntu
 ```
 
-step 2: Stop the restore serve 
+step 3: Stop the restore serve 
 
 ```
 sudo systemctl stop redis-server.service
 ```
 
-step 3: Find out the restore server redis data directory and move the `dump.rdb` dump to that directory
+step 4: Find out the restore server redis data directory and move the `dump.rdb` dump to that directory
 
 ```
 127.0.0.1:6379> CONFIG get dir  
@@ -461,9 +461,10 @@ step 3: Find out the restore server redis data directory and move the `dump.rdb`
 mv /home/ubuntu/dump.rdb /redis/data/directory 
 ```
 
-step 4: Start deamon and redis 
+step 5: Restart daemon and start redis server 
 
 ```
+systemctl daemon-reload
 redis-server
 ```
 
@@ -482,7 +483,7 @@ logfile /var/log/redis/redis-server.log
 dbfilename dump.rdb                        # Dump file name
 ```
 
-### Redis Partitioning:
+## Redis Partitioning:
 
 Redis Partitioning: is the process of splitting your data into multiple Redis instances, so that every instance will only contain a subset of your keys.
 
@@ -492,8 +493,6 @@ Redis Partitioning: is the process of splitting your data into multiple Redis in
 
 
 ## Redis Data Replication
-
-
 
 ### Features of Redis Data Replication
 
@@ -536,6 +535,9 @@ resynchronization occurs: the replica will receive a fresh copy of the dataset.
 
 ### Replication Setup
 
+Master server: 172.16.6.18
+
+Replica server: 172.16.6.57
 
 
 #### Configuring Redis Master Server(172.16.6.18)
@@ -554,9 +556,9 @@ By default, Redis is configured to **`listen and accept`** connections on the **
 
 
 ```
-bind 127.0.0.1 172.16.6.18 -::1
-requirepass DLT@DevOps44
+bind 127.0.0.1 172.16.6.18 ::1
 protected-mode no
+requirepass DLT@DevOps44                # use the AUTH password which we use in redis-cli
 supervised systemd
 ```
 
@@ -573,7 +575,7 @@ On the replica servers, we need to configure in the **`same way`** we did for th
 On 1st replica server
 
 ```
-bind 127.0.0.1 172.16.6.57 -::1
+bind 127.0.0.1 172.16.6.57 ::1
 ```
 Now, we set up our Redis instance as a replica
 
@@ -583,12 +585,23 @@ In order to configure the Redis instance as a **`replica`**, we can use the **`r
 ```
 replicaof 172.16.6.18 6379
 masterauth DLT@DevOps44
+requirepass passwordslave
 ```
 ```
+systemctl daemon-reload
 sudo systemctl restart redis
 ```
 
 #### Verifying master-replica status
+
+On the master node run the following commands
+
+![Screenshot from 2023-09-10 14-55-04](https://github.com/Mohsem35/DBA/assets/58659448/392190f0-a439-4c9e-962e-02f05fc95736)
+
+Check the replication status on the slaves as well
+
+![Screenshot from 2023-09-10 14-59-37](https://github.com/Mohsem35/DBA/assets/58659448/a1ae606e-5fb4-48e1-b89e-3ae3ff89f055)
+
 
 
 ### What is Redis Data Replication ID?
