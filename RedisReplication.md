@@ -11,13 +11,38 @@ Redis is a **`TCP server`** and supports **`request/response protocol`**. In Red
 
 ### Contents
 
-- [Redis Advantages](#redis-advantages)
-- [Redis Commands](#redis-commands)
-- [Redis Data Types](#redis-data-types)
-- [Redis Publish Subscribe](#redis-publish-subscribe)
-- [Redis Backup Restore](#redis-backup-restore)
-- [Redis Replication](#replication-setup)
-- [Redis Security](#redis-security)
+1. [Redis Advantages](#redis-advantages)
+2. [Redis Commands](#redis-commands)
+3. [Redis Data Types](#redis-data-types)
+4. [Redis Publish Subscribe](#redis-publish-subscribe)
+5. [Redis Backup Restore](#redis-backup-restore)
+6. [Redis Replication](#replication-setup)
+7. [Redis Security](#redis-security)
+
+
+Q. Redis is a in memory database, so after server restart why the redis databases doesn't wipe?
+
+1. `Snapshots`: Redis can periodically save snapshots of the **`in-memory data to disk`**. These snapshots are essentially **`point-in-time copies`** of the dataset, and they are saved as binary files on disk. By default, Redis saves snapshots every **`15 minutes`** if at least one key has changed.
+
+For example, this configuration will make Redis automatically dump the dataset to disk every 60 seconds if at least 1000 keys changed:
+```
+save 60 1000
+```
+This strategy is known as **`snapshotting`**.
+  
+3. `Append-Only Files (AOF)`: In addition to snapshots, Redis can use an Append-Only File (AOF) for persistence. The AOF **`logs every write operation`** to the database, so it contains a complete record of all changes made to the data. By replaying the AOF log, Redis can reconstruct the dataset from scratch. This log is written in an append-only manner, which means it is **`continuously updated`** with new write operations.
+
+You can turn on the AOF in your configuration file:
+
+```
+appendonly yes
+```
+
+3. `Combination of Snapshots and AOF`: Redis often uses a combination of both snapshots and AOF for persistence. When Redis restarts, it can use the latest snapshot to load the dataset into memory and then replay the AOF log to bring it up to the current state.
+
+So, even if your PC is restarted, Redis can recover its data from these snapshots and/or the AOF log. This is why Redis is often described as having a **`hybrid`** in-memory and on-disk storage model that provides durability and persistence, even in the face of system crashes or restarts.
+
+
 
 
 ## Redis Advantages
@@ -481,6 +506,7 @@ bind 127.0.0.1 10.0.0.1 ::1                # Listens on specific IPv4 addresses 
 protected-mode no                          # Clients from other hosts to connect to Redis
 logfile /var/log/redis/redis-server.log  
 dbfilename dump.rdb                        # Dump file name
+replica-read-only yes
 ```
 
 ## Redis Partitioning:
@@ -533,11 +559,22 @@ resynchronization occurs: the replica will receive a fresh copy of the dataset.
 
 ![ezgif com-webp-to-jpg](https://github.com/Mohsem35/DBA/assets/58659448/870b21e6-8fdc-44e8-9c8f-58e46b0728e6)
 
+This system works using three main mechanisms:
+
+- When a master and a replica instances are **`well-connected`**, the master keeps the replica updated by sending a **`stream of commands to the replica`** to replicate the effects on the dataset happening in the master side due to: client writes, keys expired or evicted, any other action changing the master dataset.
+
+- When the link between the master and the **`replica breaks`**, for network issues or because a timeout is sensed in the master or the replica, the replica **`reconnects`** and attempts to proceed with a **`partial resynchronization`**: it means that it will try to just obtain the part of the stream of commands it missed during the disconnection.
+
+- When a **`partial resynchronization is not possible`**, the replica will ask for a **`full resynchronization`**. This will involve a more complex process in which the master needs to create a snapshot of all its data, send it to the replica, and then continue sending the stream of commands as the dataset changes.
+
+
 ### Replication Setup
+- Replicas support a **`read-only`** mode that is enabled by **`default`**
 
-Master server: 172.16.6.18
+redis01 (Master): 172.16.6.18
 
-Replica server: 172.16.6.57
+redis02 (Slave): 172.16.6.57
+
 
 
 #### Configuring Redis Master Server(172.16.6.18)
@@ -602,7 +639,32 @@ Check the replication status on the slaves as well
 
 ![Screenshot from 2023-09-10 14-59-37](https://github.com/Mohsem35/DBA/assets/58659448/a1ae606e-5fb4-48e1-b89e-3ae3ff89f055)
 
+### Redis Replication Failover(replica to new_master)
 
+If master node is broken and/or down, replica, the current slave, needs to be made to the **`new master`**. First let's check for the current replication setup on replica: 
+
+```
+redis-cli info
+```
+
+Let's tell replica to become a new_master server: 
+```
+redis-cli
+127.0.0.1:6379> slaveof no one
+OK 
+```
+Verify with info again.
+
+
+After a while, when **`old_master is fixed`**, new_master can be connected as slave to old_master to sync the new data. Run the following commands to the new_master server
+
+```
+redis-cli
+127.0.0.1:6379> slaveof 172.16.6.18 6379
+```
+Verify with info again.
+
+[Redis Failover Documentation](https://redis.io/commands/slaveof/)
 
 ### What is Redis Data Replication ID?
 
