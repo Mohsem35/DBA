@@ -145,6 +145,10 @@ sudo systemctl start postgresql@14-initdb.service
 ```
 
 ```
+export PATH=$PATH:/usr/bin
+```
+```
+# data directory
 /var/lib/postgresql/14/main
 ```
 ```
