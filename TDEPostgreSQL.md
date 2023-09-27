@@ -50,10 +50,14 @@ cd postgresql-12.3_TDE_1.0/
 ```
 
 ```
+sudo apt-get update
+sudo apt-get install build-essential checkinstall zlib1g-dev postgresql-client-common libreadline-dev libpq-dev
+sudo apt-get install libssl-dev postgresql-common
+```
+
+```
 sudo apt-get install libldap2-dev
 sudo apt-get install libperl-dev
-sudo apt-get install libssl-dev
-sudo apt-get install libreadline-dev
 sudo apt-get install flex
 sudo apt-get install bison
 sudo apt-get install zlibc zlib1g-dev openssl python-dev
@@ -61,7 +65,8 @@ sudo apt-get install zlibc zlib1g-dev openssl python-dev
 
 
 ```
-./configure --prefix=/usr/local/pg12tde --with-openssl --with-perl \
+# in pgsql directory all files will be installed
+./configure --prefix=/usr/local/pgsql --with-openssl --with-perl \
    --with-python --with-ldap
 ```
 
@@ -80,6 +85,11 @@ sudo make install
 If you want to use more than one CPU core, you can add the -j flag to “make” to compile code in parallel. 
 
 PostgreSQL is now ready, and you can already prepare your server infrastructure by adjusting the $PATH environment variables so you can easily access the database.
+
+```
+ls -lh /usr/local/pgsql/
+```
+⎟   Note: If you see (`bin` `include` `lib` `share`) means we have installed the customized postgresql
 
 
 ### 4. Setting up key management
@@ -107,16 +117,34 @@ chmod +x /somewhere/provide_key.sh
 ⎟   Note: You don’t have to write a shell script – you can use any kind of executable such as a C, Go or Python.
 
 
-```
-# create cluster in postgresql
-sudo /usr/bin/pg_createcluster 14 initdb
+### 5. Creating a database instance / cluster
 
-# drop cluster
-sudo /usr/bin/pg_dropcluster --stop 14 initdb
+
+Now log in as postgres user:
 ```
+sudo su - postgres
 ```
-Creating new PostgreSQL cluster 14/initdb ...
-/usr/lib/postgresql/14/bin/initdb -D /var/lib/postgresql/14/initdb --auth-local peer --auth-host scram-sha-256 --no-instructions
+After this step, you now need to initialize your database in a directory of your choice. This is essential to be on the safe side, that is to reduce any permission errors during the running of the postgres server. 
+Create the directory and add the attributes to it for access later on:
+
+```
+sudo mkdir /usr/local/postgres
+sudo chmod 775 /usr/local/postgres
+sudo chown postgres /usr/local/postgres
+```
+
+Now you can initialize your database with the key you created in the provide_key.sh file above. Before that, you also need to set the export path for the database
+
+    export PATH=$PATH:/usr/local/pgsql/bin
+
+And finally hit:
+
+    initdb -D /usr/local/postgres -K /provide_key.sh
+
+This will enable the encryption and provide you with a command at the very end to copy and run for executing the encrypted server. The command will look something like this:
+
+
+```
 The files belonging to this database system will be owned by user "postgres".
 This user must also own the server process.
 
@@ -125,8 +153,9 @@ The default database encoding has accordingly been set to "UTF8".
 The default text search configuration will be set to "english".
 
 Data page checksums are disabled.
+Data encryption is enabled.
 
-fixing permissions on existing directory /var/lib/postgresql/14/initdb ... ok
+fixing permissions on existing directory /usr/local/postgres ... ok
 creating subdirectories ... ok
 selecting dynamic shared memory implementation ... posix
 selecting default max_connections ... 100
@@ -136,8 +165,31 @@ creating configuration files ... ok
 running bootstrap script ... ok
 performing post-bootstrap initialization ... ok
 syncing data to disk ... ok
-Ver Cluster Port Status Owner    Data directory                Log file
-14  initdb  5433 down   postgres /var/lib/postgresql/14/initdb /var/log/postgresql/postgresql-14-initdb.log
+
+initdb: warning: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /usr/local/postgres -l logfile start
+
+```
+### Database log configuration
+
+```
+# create custom log directory
+sudo su - postgres
+sudo mkdir /usr/local/pgsql/data/pg_log/
+sudo chmod 777 /usr/local/pgsql/data/pg_log
+```
+
+Edit the **`postgresql.conf`** file for this custom logging
+
+```
+logging_collector = on
+log_directory = /usr/local/pgsql/data/pg_log
+log_filename = <uncomment_this_value>
 ```
 
 ```
