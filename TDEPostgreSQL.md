@@ -1,3 +1,6 @@
+new database/cluster cncrypt করার way পাওয়া গেছে, কিন্তু existing database কিভাবে encrypt করব তার way পাই নাই। 
+
+
 
 Make sure that all the dependencies are met.
 
@@ -191,18 +194,6 @@ logging_collector = on
 log_directory = /usr/local/pgsql/data/pg_log
 log_filename = <uncomment_this_value>
 ```
-
 ```
-sudo systemctl start postgresql@14-initdb.service
-```
-
-```
-export PATH=$PATH:/usr/bin
-```
-```
-# data directory
-/var/lib/postgresql/14/main
-```
-```
-sudo /usr/bin/pg_createcluster 14 initdb -D /usr/local/postgres -K /home/ubuntu/postgresql-12.3_TDE_1.0/somewhere/provide_key.sh
+pg_ctl -D /usr/local/postgres -l logfile start
 ```
