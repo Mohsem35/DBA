@@ -63,7 +63,7 @@ sudo apt-get install libldap2-dev
 sudo apt-get install libperl-dev
 sudo apt-get install flex
 sudo apt-get install bison
-sudo apt-get install zlibc zlib1g-dev openssl python-dev
+sudo apt-get install python3-dev
 ```
 
 
