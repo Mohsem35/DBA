@@ -43,9 +43,44 @@ appendonly yes
 So, even if your PC is restarted, Redis can recover its data from these snapshots and/or the AOF log. This is why Redis is often described as having a **`hybrid`** in-memory and on-disk storage model that provides durability and persistence, even in the face of system crashes or restarts.
 
 
+## Redis Installation
 
+```
+curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
 
-## Redis Advantages
+echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+
+sudo apt-get update
+sudo apt-get install redis-server
+sudo apt-get install redis
+```
+```
+sudo vim /etc/redis/redis.conf
+```
+
+```
+. . .
+
+# If you run Redis from upstart or systemd, Redis can interact with your
+# supervision tree. Options:
+#   supervised no      - no supervision interaction
+#   supervised upstart - signal upstart by putting Redis into SIGSTOP mode
+#   supervised systemd - signal systemd by writing READY=1 to $NOTIFY_SOCKET
+#   supervised auto    - detect upstart or systemd method based on
+#                        UPSTART_JOB or NOTIFY_SOCKET environment variables
+# Note: these supervision methods only signal "process is ready."
+#       They do not enable continuous liveness pings back to your supervisor.
+supervised systemd
+. . .
+```
+
+```
+sudo systemctl enable redis-server --now
+sudo systemctl restart redis.service
+sudo systemctl status redis.service
+```
+
+### Redis Advantages
 
 **1. `Exceptionally fast`** − Redis is very fast and can perform about _110000 SETs_/second, about _81000 GETs_/second.
 
@@ -64,7 +99,7 @@ So, even if your PC is restarted, Redis can recover its data from these snapshot
 #### Start redis
 
 ```
-redis-server
+sudo systemctl start redis.service
 ```
 
 #### Redis version
@@ -84,7 +119,6 @@ PONG
 ```
 
 #### Redis server status
-
 
 ```
 sudo systemctl status redis-server.service
@@ -166,9 +200,9 @@ bind 127.0.0.1 <own_lan_ip> ::1
 protected-mode no
 ```
 ```
-systemctl stop redis-server.service
+sudo systemctl stop redis-server.service
 systemctl daemon-reload
-redis-server
+sudo systemctl start redis-server.service
 ```
 
 
@@ -489,8 +523,8 @@ mv /home/ubuntu/dump.rdb /redis/data/directory
 step 5: Restart daemon and start redis server 
 
 ```
-systemctl daemon-reload
-redis-server
+sudo systemctl daemon-reload
+sudo systemctl start redis-server.service
 ```
 
 
@@ -625,7 +659,7 @@ masterauth DLT@DevOps44
 requirepass passwordslave
 ```
 ```
-systemctl daemon-reload
+sudo systemctl daemon-reload
 sudo systemctl restart redis
 ```
 
