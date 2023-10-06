@@ -1,7 +1,7 @@
 ## How do you fix slow databases in production
 
 
-### Identify the root cause 
+### 1. Identify the root cause 
 
 In order to fix a slow database, the first step is to identify the root cause of the issue. To do this, **`monitor and measure the performance of your database`**, and look for any signs of bottlenecks, 
 errors, or anomalies. You can utilize various tools and methods to collect and analyze data, such as `database logs`, `metrics`, `queries`, and `indexes`. Database logs record transactions, queries, and 
@@ -32,17 +32,6 @@ This query provides a huge rabbit hole of information that can't be described in
 
 
 
-_Adding more memory to your system will allow you to convert your most utilized tables_ to **`Memory Optimized Tables (MOTs)`**. MOTs perform on average **`9x faster`** than traditional tables in most instances. 
-There is a bit of maintenance associated with MOTs, such as `BUCKET_COUNT` increases, but this can be automated with some fairly simple Server Jobs in MSSQL (or Logic Apps in Azure SQL). There is also some special parameters you must use when joining a MOT to a traditional table if you have snapshot isolation enabled. 
-
-Example:
-
-```sql
-select * from MOT_Table WITH (SNAPSHOT)
-join Traditional_table on Traditional_table.mot_id = MOT_Table.id
-```
-
-
 **_Arockia Nirmal Amala Doss(Data Engineer AWS | SQL | PYTHON | DATA WAREHOUSING | ETL | CI/CD | IaC | AWS Community Builder)_**
 
 - Utilize Automated Performance Monitoring tools to detect issues early.
@@ -53,7 +42,7 @@ join Traditional_table on Traditional_table.mot_id = MOT_Table.id
 - Engage in thorough code reviews to uncover inefficient queries.
 - Seek external expertise or consult database vendors for specialized diagnostic tools or advice
 
-### Optimize your queries
+### 2. Optimize your queries
 
 **`Poorly written or inefficient queries`** are a _common cause of slow databases_. Queries that are too `complex`, `frequent`, or `large` can consume significant resources and time, thus affecting the 
 performance of your database and applications. To ensure optimal performance, you should use **`appropriate data types and formats`** for your columns and variables, while **`avoiding implicit conversions 
@@ -81,7 +70,7 @@ With that information, you can focus on the right queries that you want to tune 
 depending on the query size - but it's the best way to understand **`how the query is operating behind the scenes`** (_which indexes are being used, if there are full table scans, etc_). 
 Those details will give you the right bootstrap to tune your queries and create the right indexes. Another pro-tip is to use partial indexes (with WHERE clause).
 
-### Tune your parameters
+### 3. Tune your parameters
 
 Slow databases are often caused by suboptimal or outdated configuration parameters. Parameters are settings that control the behavior and performance of your database, such as **`memory allocation`**, 
 **`concurrency control`**, **`connection pooling`**, **`logging level`**, etc. To tune your parameters, you can review your current values and compare them to the recommended or default values for your database version 
@@ -99,9 +88,30 @@ effects of changing your parameter values on your database performance with tool
 - Schema Optimization: Review and optimize the database schema.
 - Load Testing: Test your database under stress to proactively identify issues.Query Caching: Implement query caching in your application.
 
+### 4. Upgrade your hardware
+
+Sometimes, slow databases are not caused by software, but by hardware. Insufficient or faulty CPU, memory, disk, or network can lead to slowdowns, crashes, or failures. To upgrade your hardware, you should assess your current hardware specifications and capabilities, and identify any gaps or limitations that can affect your database performance. Research and compare the available hardware options and solutions for your database platform and environment to consider factors such as cost, compatibility, scalability, etc. Plan and execute your hardware upgrade project with tools such as backups, restores, migrations, or replications to ensure the safety and continuity of your data. Test and verify your hardware upgrade results with tools such as diagnostics, audits, or validations to ensure the functionality and performance of your database. Upgrading your hardware can enhance the capacity and quality of your database and support the growth and development of your applications
+
+
+_Adding more memory to your system will allow you to convert your most utilized tables_ to **`Memory Optimized Tables (MOTs)`**. MOTs perform on average **`9x faster`** than traditional tables in most instances. 
+There is a bit of maintenance associated with MOTs, such as `BUCKET_COUNT` increases, but this can be automated with some fairly simple Server Jobs in MSSQL (or Logic Apps in Azure SQL). There is also some special parameters you must use when joining a MOT to a traditional table if you have snapshot isolation enabled. 
+
+Example:
+
+```sql
+select * from MOT_Table WITH (SNAPSHOT)
+join Traditional_table on Traditional_table.mot_id = MOT_Table.id
+```
+
+
+### 5. Maintain your database
+
+Finally, the cause of slow databases can be related to the **`lack of or improper maintenance of your database`**. Maintenance tasks such as _backups, restores, repairs, or defragmentations are essential for preserving and restoring the integrity and availability of your data, but they can also affect the performance and stability of your database_. To maintain your database, it's best to **`schedule and automate your maintenance tasks`** using tools such as `cron jobs`, `scripts`, or `schedulers` to run them at regular intervals or specific times. Additionally, monitor and manage your maintenance tasks with _notifications, logs, or reports_ to track their status, progress, and outcomes. Optimize and balance your maintenance tasks with compression, encryption, or partitioning to reduce the size and complexity of your data. Finally, _review and update your maintenance tasks with feedback, analysis, or testing to evaluate their effectiveness and efficiency_. By maintaining your database in this way you can ensure the security and durability of your data while preventing or resolving any issues or errors that can affect your database performance.
+
+### 6. Others...
+
 
 **_Mohsen Bahadori(Senior Oracle Database and Linux Administrator)_**
-
 
 
 First, the level of the problem must be determined. Is the problem `database-wide` or a `subset of the system` or `just one query`? This helps us **`categorize`** the level of the problem and also find the 
