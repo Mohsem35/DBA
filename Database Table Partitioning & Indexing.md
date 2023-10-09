@@ -1,3 +1,6 @@
+## Partitioning
+
+
 #### Benefits of partitioning
 1. Partitioning can offer several advantages for your database testing and development, such as **`faster queries`**, **`easier maintenance`**, and **`higher availability`**.
 2. _By dividing a large table into smaller ones_, you can **`reduce`** the amount of data that needs to be **`scanned`**, **`sorted`**, or **`joined`**. This can improve the response time and throughput of your queries, especially if you use indexes and partitions wisely.
@@ -43,3 +46,5 @@ Generally speaking, you should start thinking about partitioning if you identify
   maintaining smaller partitions independently, reducing the impact on your database's overall performance.
 5. **`You’re managing data retention policies`**. If your dataset has built-in obsolescence, where _older data is periodically purged_, partitioning can make these operations much more efficient. _Dropping an old partition is much faster and less resource-intensive than deleting rows_.
 6. **`You want to use less memory`**. If you want to operate with limited memory, you might benefit from partitioning, as smaller indexes and data chunks fit better in memory and improve cache hit rates. In most cases, this will also improve performance.
+
+## Indexing
