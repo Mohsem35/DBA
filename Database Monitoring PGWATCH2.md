@@ -101,10 +101,15 @@ networks:
 
 
 5432 - Postgres configuration or metrics storage DB (when using the cybertec/pgwatch2-postgres image)
+
 **`8080`** - _Management Web UI_ (monitored hosts, metrics, metrics configurations)
+
 8081 - Gatherer healthcheck / statistics on number of gathered metrics (JSON).
+
 **`3000`** - _Grafana dashboarding_
-**`8086`** - InfluxDB API (when using the InfluxDB version)
+
+**`8086`** - _InfluxDB API_ (when using the InfluxDB version)
+
 8088 - InfluxDB Backup port (when using the InfluxDB version)
 
 
@@ -120,6 +125,91 @@ The original pgwatch2 “batteries-included” image with __InfluxDB metrics sto
 
 _Exactly the same as previous, but metrics are also stored in PostgreSQL_- thus needs more disk space. But in return you get more “out of the box” dashboards, as the power of standard SQL gives more complex visualization options.
 
+### Steps to configure your database for monitoring
+
+### Config DB based setup(Pull)
+
+#### Custom installation
+
+As described in the Components chapter, there a couple of ways how to set up up pgwatch2. Two most common ways though are the central Config DB based `“pull”` approach and the YAML file based `“push”` approach, plus Grafana to visualize the gathered metrics.
+
+
+Step 1: Install pgwatch2 - either from pre-built packages or by compiling the Go code
+
+- Using pre-built packages
+
+The pre-built DEB / RPM / Tar packages are available on the Github releases page.
+
+```
+# find out the latest package link and replace below, using v1.8.0 here
+wget https://github.com/cybertec-postgresql/pgwatch2/releases/download/v1.8.0/pgwatch2_v1.8.0-SNAPSHOT-064fdaf_linux_64-bit.deb
+sudo dpkg -i pgwatch2_v1.8.0-SNAPSHOT-064fdaf_linux_64-bit.deb
+```    
+Install Go by following the official instructions [Go Installation Offical Documentation](https://go.dev/doc/install)
+
+- Compiling the **`Go`** code yourself
+1. **Remove any previous Go installation** by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go: 
+This method of course is not needed unless dealing with maximum security environments or some slight code changes are required.
+```
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.X.Y.linux-amd64.tar.gz
+```
+(You may need to run the command as root or through sudo). 
+**Do not** untar the archive into an existing `/usr/local/go` tree. This is known to produce broken Go installations. 
+
+2. Add /usr/local/go/bin to the PATH environment variable.
+
+You can do this by adding the following line to your $HOME/.profile or /etc/profile (for a system-wide installation):
+```
+export PATH=$PATH:/usr/local/go/bin
+```
+
+3. Verify that you've installed Go by opening a command prompt and typing the following command:
+
+```
+go version
+```
+4. Confirm that the command prints the installed version of Go.
+
+
+#### Basic preparations
+
+As a base requirement you'll need a login user (non-superuser suggested) for connecting to your PostgreSQL servers and fetching metrics queries.
+
+```
+CREATE ROLE pgwatch2 WITH LOGIN PASSWORD 'secret';
+-- NB! For critical databases it might make sense to ensure that the user account
+-- used for monitoring can only open a limited number of connections
+-- (there are according checks in code, but multiple instances might be launched)
+ALTER ROLE pgwatch2 CONNECTION LIMIT 3;
+GRANT pg_monitor TO pgwatch2;   // v10+
+GRANT CONNECT ON DATABASE mydb TO pgwatch2;
+GRANT USAGE ON SCHEMA public TO pgwatch2; -- NB! pgwatch doesn't necessarily require using the public schema though!
+GRANT EXECUTE ON FUNCTION pg_stat_file(text) to pgwatch2; -- needed by the wal_size metric
+```
 
 
 
+For most monitored databases it’s extremely beneficial (to troubleshooting performance issues) to also activate the `pg_stat_statements` extension which will give us exact `“per query”` performance aggregates and also enables to calculate how many queries are executed per second for example
+
+
+1. Make sure the Postgres contrib package is installed (should be installed automatically together with the Postgres server package on Debian based systems).
+
+```
+On RedHat / Centos: yum install -y postgresqlXY-contrib
+On Debian / Ubuntu: apt install postgresql-contrib
+```
+
+
+#### Rolling out helper functions
+
+Helper functions in pgwatch2 context are standard **`Postgres stored procedures`**, running under **`SECURITY DEFINER`** privileges. Via such wrapper functions one can do controlled privilege escalation - i.e. to give access to protected Postgres metrics (_like active session details, “per query” statistics_) or even OS-level metrics, to normal unprivileged users, like the pgwatch2 monitoring role.
+
+
+```
+export PGUSER=superuser
+psql -f /etc/pgwatch2/metrics/00_helpers/get_stat_activity/$pgver/metric.sql mydb
+psql -f /etc/pgwatch2/metrics/00_helpers/get_stat_replication/$pgver/metric.sql mydb
+psql -f /etc/pgwatch2/metrics/00_helpers/get_wal_size/$pgver/metric.sql mydb
+psql -f /etc/pgwatch2/metrics/00_helpers/get_stat_statements/$pgver/metric.sql mydb
+psql -f /etc/pgwatch2/metrics/00_helpers/get_sequences/$pgver/metric.sql mydb
+```
