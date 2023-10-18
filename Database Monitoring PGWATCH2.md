@@ -12,22 +12,29 @@ pgwatch2 is a flexible **`PostgreSQL-specific`** monitoring solution relying on 
 
 #### List of main features
 
-- Non-invasive setup on PostgreSQL side - **`no extensions nor superuser rights are required`** for the base functionality so that even unprivileged users like developers can get a good overview of database activities without any hassle
-- **`Many metric data storage options`** - _PostgreSQL_, _PostgreSQL with the compression enabled TimescaleDB extension_, _InfluxDB_, _Graphite_ or Prometheus scraping
-- Possible to monitoring all, single or a subset (list or regex) of databases of a PostgreSQL instance
-- Capabilities to go beyond PostgreSQL metrics gathering with built-in log parsing for error detection and **`OS level`** _metrics collection_ via **`PL/Python`** “helper” stored procedures
-- A _Ping_ mode to test connectivity to all databases under monitoring
-
+- Non-invasive setup, no extensions nor superuser rights required for the base functionality
+- Intuitive metrics presentation using the Grafana dashboarding engine with optional Alerting
+- Lots of pre-configured dashboards and metric configurations covering all Statistics Collector data
+- Easy extensibility by defining metrics in pure SQL (thus they could also be from business domain)
+- _4 supported data stores for metrics storage (PostgreSQL with or without TimescaleDB, InfluxDB, Graphite, Prometheus)_
+- Multiple configuration options (YAML, PostgreSQL, ENV) supporting both "push" and "pull" models
+- _Possible to monitoring all or a subset of DBs of a PostgreSQL cluster_
+- Global or DB level configuration of metrics/intervals
+- Kubernetes/OpenShift ready with sample templates and a Helm chart
+- PgBouncer, Pgpool-II, AWS RDS and Patroni support
+- _Internal health-check API to monitor metrics gathering status_
+- _Security options like SSL / HTTPS for all connections and password encryption for connect strings_
+- _Very low resource requirements for the collector - 1 CPU core can handle ~3k monitored DBs at 1GB RAM usage_
+- Log parsing capabilities when deployed locally in "push" mode
 
 ### Components
 
-#### The metrics gathering daemon
+#### 1. The metrics gathering daemon
 
 The metrics collector, written in Go, is the only **`mandatory and most critical component`** of the whole solution. The main task of the pgwatch2 collector / daemon is pretty simple - _1. reading the configuration and metric defintions_, _2.fetching the metrics from the configured databases_ using the configured connection info and _3. finally storing the metrics to some other database_, or just exposing them over a port for scraping in case of Prometheus mode.
 
 
-
-#### Configuration store
+#### 2. Configuration store
 
 The configuration says **`which databases`**, **`how often`** and with **`which metrics (SQL-s queries)`** are to be gathered. There are 3 options to store the configuration:
 
@@ -37,7 +44,7 @@ The configuration says **`which databases`**, **`how often`** and with **`which 
 
 
 
-#### Metrics storage DB
+#### 3. Metrics storage DB
 
 Many options here so that one can for example go for maximum storage effectiveness or pick something where they already know the query language:
 
@@ -49,20 +56,21 @@ Many options here so that one can for example go for maximum storage effectivene
 
 
 
-#### The Web UI
+#### 4. The Web UI
 
 The second homebrewn component of the pgwatch2 solution is an optional and relatively simple Web UI for **`administering details`** of the monitoring configuration like _which databases should be monitored, with which metrics and intervals_. 
 
 
-#### Metrics representation
+#### 5. Metrics representation
 
 Standard pgwatch2 setup uses **`Grafana`** for analyzing the _gathered metrics data in a visual, point-and-click way_. For that a rich set of predefined dashboards for Postgres and InfluxDB data sources is provided, that should _cover the needs of most users_ - advanced users would mostly always want to customize some aspects though, so it’s not meant as a one-size-fits-all solution.
 
-#### Component reuse
+#### 6. Component reuse
 
 NB! All components are **`loosely coupled`**, thus for non-pgwatch2 components (pgwatch2 components are only the metrics collector and the optional Web UI) you can decide to _make use of an already existing installation of Postgres, Grafana or InfluxDB and run additionally just the pgwatch2 collector_
 
 
+### Installing using Docker
 
 ```
 # let's create volumes for Postgres, Grafana and pgwatch2 marker files / SSL certificates
@@ -75,6 +83,9 @@ docker run -d --restart=unless-stopped --name pw2 \
   -v pg:/var/lib/postgresql -v grafana:/var/lib/grafana -v pw2:/pgwatch2/persistent-config \
   cybertec/pgwatch2-postgres:X.Y.Z
 ```
+
+or Use `docker-compose` file
+
 ```
 # docker-compose.yaml
 version: '3'
@@ -136,8 +147,70 @@ _Exactly the same as previous, but metrics are also stored in PostgreSQL_- thus 
 
 ### Preparing databases for monitoring
 
+**Step 1**: Install pgwatch2 - either from pre-built packages or by compiling the Go code
 
+**1st Approach**: Using pre-built packages
 
+The pre-built DEB / RPM / Tar packages are available on the Github releases page.
+
+```
+# find out the latest package link and replace below, using v1.8.0 here
+wget https://github.com/cybertec-postgresql/pgwatch2/releases/download/v1.8.0/pgwatch2_v1.8.0-SNAPSHOT-064fdaf_linux_64-bit.deb
+sudo dpkg -i pgwatch2_v1.8.0-SNAPSHOT-064fdaf_linux_64-bit.deb
+```    
+Install Go by following the official instructions [Go Installation Offical Documentation](https://go.dev/doc/install)
+
+**2nd Approach**: Compiling the **`Go`** code yourself
+
+Download Go package
+
+```
+curl -OL https://golang.org/dl/go1.X.Y.linux-amd64.tar.gz
+```
+
+1. **Remove any previous Go installation** by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go: 
+This method of course is not needed unless dealing with maximum security environments or some slight code changes are required.
+```
+sudo su
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.X.Y.linux-amd64.tar.gz
+```
+(You may need to run the command as root or through sudo). 
+**Do not** untar the archive into an existing `/usr/local/go` tree. This is known to produce broken Go installations. 
+
+2. Add `/usr/local/go/bin` to the **`PATH environment variable`**
+
+You can do this by adding the following line to your $HOME/.profile or /etc/profile (for a system-wide installation):
+```
+export PATH=$PATH:/usr/local/go/bin
+```
+
+or Add permanently this variable 
+
+```
+vim .bashrc
+
+# add the following line at the bottom of the .bashrc file
+PATH=$PATH:/usr/local/go/bin
+
+source .bashrc
+```
+
+3. **`Verify`** that you've installed Go by opening a command prompt and typing the following command:
+
+```
+go version
+```
+4. Confirm that the command prints the installed version of Go.
+5. Get the **`pgwatch2 project’s code and compile`** the gatherer daemon
+
+```bash
+git clone https://github.com/cybertec-postgresql/pgwatch2.git
+cd pgwatch2/pgwatch2
+./build_gatherer.sh
+# after fetching all the Go library dependencies (can take minutes)
+# an executable named "pgwatch2" should be generated. Additionally it's a good idea
+# to copy it to /usr/bin/pgwatch2-daemon as that's what the default SystemD service expects.
+```
 
 As a base requirement you'll need a login user (non-superuser suggested) for connecting to your PostgreSQL servers and fetching metrics queries.
 
@@ -213,95 +286,6 @@ psql -f /etc/pgwatch2/metrics/00_helpers/get_psutil_cpu/9.1/metric.sql <db_name>
 psql -f /etc/pgwatch2/metrics/00_helpers/get_psutil_mem/9.1/metric.sql <db_name>
 psql -f /etc/pgwatch2/metrics/00_helpers/get_psutil_disk/9.1/metric.sql <db_name>
 psql -f /etc/pgwatch2/metrics/00_helpers/get_psutil_disk_io_total/9.1/metric.sql <db_name>
-```
-
-
-
-### Config the Database for monitoring (Pull Model)
-
-#### Custom installation
-
-As described in the Components chapter, there a couple of ways how to set up up pgwatch2. Two most common ways though are the central Config DB based `“pull”` approach and the YAML file based `“push”` approach, plus Grafana to visualize the gathered metrics.
-
-
-**Step 1**: Install pgwatch2 - either from pre-built packages or by compiling the Go code
-
-**1st Approach**: Using pre-built packages
-
-The pre-built DEB / RPM / Tar packages are available on the Github releases page.
-
-```
-# find out the latest package link and replace below, using v1.8.0 here
-wget https://github.com/cybertec-postgresql/pgwatch2/releases/download/v1.8.0/pgwatch2_v1.8.0-SNAPSHOT-064fdaf_linux_64-bit.deb
-sudo dpkg -i pgwatch2_v1.8.0-SNAPSHOT-064fdaf_linux_64-bit.deb
-```    
-Install Go by following the official instructions [Go Installation Offical Documentation](https://go.dev/doc/install)
-
-**2nd Approach**: Compiling the **`Go`** code yourself
-
-Download Go package
-
-```
-curl -OL https://golang.org/dl/go1.X.Y.linux-amd64.tar.gz
-```
-
-1. **Remove any previous Go installation** by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go: 
-This method of course is not needed unless dealing with maximum security environments or some slight code changes are required.
-```
-sudo su
-rm -rf /usr/local/go && tar -C /usr/local -xzf go1.X.Y.linux-amd64.tar.gz
-```
-(You may need to run the command as root or through sudo). 
-**Do not** untar the archive into an existing `/usr/local/go` tree. This is known to produce broken Go installations. 
-
-2. Add `/usr/local/go/bin` to the **`PATH environment variable`**
-
-You can do this by adding the following line to your $HOME/.profile or /etc/profile (for a system-wide installation):
-```
-export PATH=$PATH:/usr/local/go/bin
-```
-
-or Add permanently this variable 
-
-```
-vim .bashrc
-
-# add the following line at the bottom of the .bashrc file
-PATH=$PATH:/usr/local/go/bin
-
-source .bashrc
-```
-
-3. **`Verify`** that you've installed Go by opening a command prompt and typing the following command:
-
-```
-go version
-```
-4. Confirm that the command prints the installed version of Go.
-5. Get the **`pgwatch2 project’s code and compile`** the gatherer daemon
-
-```bash
-git clone https://github.com/cybertec-postgresql/pgwatch2.git
-cd pgwatch2/pgwatch2
-./build_gatherer.sh
-# after fetching all the Go library dependencies (can take minutes)
-# an executable named "pgwatch2" should be generated. Additionally it's a good idea
-# to copy it to /usr/bin/pgwatch2-daemon as that's what the default SystemD service expects.
-```
-
-
-
-
-
-**Step 2**: Boostrap the config DB
-
-Typically called pgwatch2 but can be anything really, if the schema creation file is adjusted accordingly.
-
-Create a user to “own” the pgwatch2 schema
-
-```sql
-psql -c "create user pgwatch2 password 'xyz'"
-psql -c "create database pgwatch2 owner pgwatch2"
 ```
 
 
