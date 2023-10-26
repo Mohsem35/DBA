@@ -3,6 +3,22 @@
 
 Here, we will be looking at the step-by-step guide on how to set up _PostgreSQL 14_ streaming replication on _Ubuntu 20.04 LTS_. Like many popular database platforms, PostgreSQL offers its own replication solution that offers data high-availability and is fairly easy to implement.
 
+1. [Database Replication & Types](#1-database-replication--types)
+2. [Getting Ready](#2-getting-ready)
+    2.1 [Prerequisite](#21-prerequisite)
+    2.2 [Configure the primary node](#22-configure-the-primary-node)
+    2.3 [Setup Standby Node](#23-setup-standby-node)
+3. [How It Works](#3-how-it-works)
+    3.1 [Check Database Replication](#31-check-database-replication)
+4. [There’s More](#4-theres-more)
+    4.1 [Enable Synchronous Replication](#41-enable-synchronous-replication)
+    4.2 [Check Synchronous Replication is Done or Not](#42-check-synchronous-replication-is-done-or-not)
+    4.3 [Promote Standby Server to New_Primary](#43-promote-standby-server-to-new_primary)
+    4.4 [Checking the performance of replication](#44-checking-the-performance-of-replication)
+    4.5 [Checking the lag behind among the nodes](#45-checking-the-lag-behind-among-the-nodes)
+    4.6 [Stop Replication](#46-stop-replication)
+5. [Conclusion](#5-conclusion)
+
 ### 1. Database Replication & Types 
 
 Q. What is Database Replication?
@@ -367,3 +383,46 @@ CentOS: /usr/pgsql-13/bin/pg_ctl promote -D /var/lib/pgsql/13/data
 Ubuntu: /usr/bin/pg_ctlcluster <version> <cluster> <action> [-- <pg_ctl options>]
 sudo pg_ctlcluster 14 main promote $PGDATA
 ```
+
+> _Note:_ After promoting the standby node as new_master, we **can’t** INSERT/UPDATE/DELETE into old_master if we start the postgres service of the old_master.
+
+#### 4.4 Checking the performance of replication
+
+Now, a question may arise that if the streaming replication degrades or increases the performance of the database cluster. To check, we can suggest some tips that you can play on your replication clusters.
+
+> _Note:_ The hardware configurations should be same in the cluster(primary and one or more standbys) 
+
+- Execute several complex queries in all nodes
+- Check query execution time(EXPLAIN ANALYZE) in both primary and standby nodes
+- Execute the same complex query in a non-replicated node of same hardware config
+- If the non-replicated node costs less for a query than you should probably upgrade the hardware components of the replicated cluster. 
+- At last, put the results in a google sheet and make a graph to analyze the performance better. 
+
+#### 4.5  Checking the lag behind among the nodes
+To monitor how much is lag behind the slots, run this query in the primary node
+
+```sql
+SELECT redo_lsn, slot_name,restart_lsn, round((redo_lsn-restart_lsn) / 1024 / 1024 / 1024, 2) AS GB_behind FROM pg_control_checkpoint(), pg_replication_slots;
+```
+
+#### 4.6 Stop Replication
+
+Change the postgresql.auto.conf file both from master and standby server.
+Remove the standby.signal file from standby server
+
+
+1. Change the **postgresql.auto.conf** file both from master and standby server.
+2. Remove the **standby.signal** file from standby server
+
+
+### 5. Conclusion
+
+Following this, you should have a working PostgreSQL 14 streaming replication on Ubuntu. To add more nodes you can replicate the steps above.
+
+```sql
+DROP A REPLICATION SLOT
+select pg_drop_replication_slot(slot_name) from pg_replication_slots where slot_name = 'bottledwater';
+```
+
+
+Ours name is = '14/standby1'
