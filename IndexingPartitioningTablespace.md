@@ -38,7 +38,7 @@ sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2023m10
 sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2023m11
 sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2023m12
 ```
-> এতটুকু পর্যন্ত কাজ replica server তে ও করতে হবে 
+> এতটুকু পর্যন্ত কাজ replica server তে ও করতে হবে না। 
 
 ```shell
 usermod -a -G sudo postgres
@@ -148,7 +148,7 @@ CREATE TABLE public."transaction" (
 ) PARTITION BY RANGE (createdon);
 ```
 
-
+> যেই table modify করতে হবে, ওই table যেই schema তে থাকবে শুধুমাত্র সেই schema টা আমরা `schema-only` dump নিব. এইদিকে যেমন transaction table modify করতে হবে। তাহলে আমাদের public schema schema-only dump নিব  
 
 ```shell
 psql -U ibprod -d ibprod < schema_ibprod_public_$(date +%d-%m-%y).sql
@@ -226,4 +226,17 @@ create index transaction_y2023m12_transactioncreatedon on transaction_y2023m12 (
 ```sql
 # psql
 \d transaction_y2022
+```
+I am executing the pg_basebackup command for replication as a root user. so all the files and tablespace directories and postgres data directory will be copied from master as root. so need to change the ownership after coping all files.
+
+
+
+### Issues 
+
+replication করার পরে must pwnership change করতে হবে
+
+
+```shell
+chown -R postgres:postgres /var/data/*
+chown -R postgres:postgres /var/lib/postgresql/14/main/*
 ```
