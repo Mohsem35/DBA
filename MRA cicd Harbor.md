@@ -92,6 +92,9 @@ Harbor node IP: 172.16.7.246
 
 Harbor is an open source **registry(like docker hub)** that secures **artifacts** with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted. Harbor, a CNCF Graduated project, delivers compliance, performance, and interoperability to help you consistently and securely manage artifacts across cloud native compute platforms like Kubernetes and Docker. 
 
+![Screenshot from 2023-12-20 19-22-00](https://github.com/Mohsem35/DBA/assets/58659448/e80b1186-bf93-4578-b190-e9fcb3825b43)
+
+
 
 #### Getting started with Harbor
 
