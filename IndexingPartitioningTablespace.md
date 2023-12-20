@@ -38,6 +38,7 @@ sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2023m10
 sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2023m11
 sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2023m12
 ```
+> এতটুকু পর্যন্ত কাজ replica server তে ও করতে হবে 
 
 ```shell
 usermod -a -G sudo postgres
@@ -74,7 +75,17 @@ drop tablespace if exists ibprod_logtbs_y2022; create tablespace ibprod_logtbs_y
 
 
 ```shell
+# dump without data
 pg_dump --schema-only -U ibprod -d ibprod -n public > schema_ibprod_public_$(date +%d-%m-%y).sql
+
+# dump with data
+pg_dump -U ibprod -d ibprod -n nda > schema_nda_ibprod_$(date +%d-%m-%y).sql
+pg_dump -U ibprod -d ibprod -n mfs > schema_mfs_ibprod_$(date +%d-%m-%y).sql
+pg_dump -U ibprod -d ibprod -n bill > schema_bill_ibprod_$(date +%d-%m-%y).sql
+pg_dump -U ibprod -d ibprod -n bank_detail > schema_bankdetail_ibprod_$(date +%d-%m-%y).sql
+pg_dump -U ibprod -d ibprod -n academia > schema_academia_ibprod_$(date +%d-%m-%y).sql
+pg_dump -U ibprod -d ibprod -n education > schema_mfs_ibprod_$(date +%d-%m-%y).sql
+pg_dump -U ibprod -d ibprod -n top_up > schema_topup_ibprod_$(date +%d-%m-%y).sql
 ```
 
 #### 4th Step: Now modify the `transaction` table in the dump file and restore
@@ -141,6 +152,13 @@ CREATE TABLE public."transaction" (
 
 ```shell
 psql -U ibprod -d ibprod < schema_ibprod_public_$(date +%d-%m-%y).sql
+
+
+psql -U ibprod -d ibprod -n nda < schema_nda_ibprod_$(date +%d-%m-%y).sql
+psql -U ibprod -d ibprod -n mfs < schema_mfs_ibprod_$(date +%d-%m-%y).sql
+...
+...
+# do the same thing for other schemas
 ```
 
 
@@ -168,7 +186,7 @@ create table transaction_y2023m12 partition of transaction for values from ('202
 
 
 
-#### 5th step : Create a data-only dump and restore that dump 
+#### 6th step : Create a data-only dump and restore that dump 
 
 ```shell
 pg_dump -U ibprod -d ibprod --data-only -n public > ibprod_dataonly.sql
@@ -184,7 +202,7 @@ pg_dump --username=ibprod --dbname=ibprod --data-only --jobs=4 --encoding=UTF8 -
 pg_restore --username=ibprod --dbname=ibprod --clean --if-exists --exit-on-error --verbose /home/ubuntu/dump
 ```
 
-#### 6th Step
+#### 7th Step: Indexing
 
 ```sql
 create index transaction_y2021_transactioncreatedon on transaction_y2021 (createdon);
