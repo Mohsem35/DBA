@@ -90,6 +90,8 @@ Harbor node IP: 172.16.7.246
 
 **What is Harbor?***
 
+Harbor হচ্ছে **Docker Image Repository** for private 
+
 Harbor is an open source **registry(like docker hub)** that secures **artifacts** with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted. Harbor, a CNCF Graduated project, delivers compliance, performance, and interoperability to help you consistently and securely manage artifacts across cloud native compute platforms like Kubernetes and Docker. 
 
 ![Screenshot from 2023-12-20 19-22-00](https://github.com/Mohsem35/DBA/assets/58659448/e80b1186-bf93-4578-b190-e9fcb3825b43)
@@ -195,7 +197,7 @@ services:
 
   web:
     image: 192.168.50.26/mra/web@sha256:631202402f320053db851bb5ce60c47e08740dc9d83c559136995283c4642ca3
-    ports:
+    ports:Docker Image Repository
       - 80:80
     deploy:
       placement:
@@ -342,3 +344,175 @@ docker service ls
 
 
 ### CICD
+
+Now we want to understand why need to implement cicd here?
+
+1. In every service directory, there will a `Dockerfile` and a `gitlab-ci.yml` file
+
+- `Dockerfile` তে image build করার instruction দেয়া থাকবে। যখন কোন code production/iat/uat তে deploy দেয়া লাগবে, At first সেই code এর একটা Dockerfile generate হবে এবং image টা MRA private registry HARBOR এ push হবে। 
+- GitLab এ code push দিচ্ছি, push দেওয়ার আগে CICD file বানাই দিচ্ছে
+
+- এই Dockerfile এ java project এর `jar` ফাইল create করার instruction দেয়া আছে
+- Dockerfile এর 1st part টা হচ্ছে gradle project build করার জন্য, 2nd part টা হচ্ছে image build করার জন্য যে base image লাগে সেইটা 
+- jar file আগেই extract করা হচ্ছে, যাতে পরে শুধু java classfile(bytecode) execute করতে পারি  
+
+
+If we build the `Dockerfile`, image will be created and we need to push that image in HARBOR
+
+Next time, যখন যার দরকার সে Harbor থেকে image pull করে নিয়ে নিজেদের local machine এ container up 
+
+Image pull করার পরে আমরা container up করতে চাচ্ছি, কিন্তু একটা একটা করে container up করা ঝামেলা। এই problem solve করতে আমাদের লাগবে **Docker-stack** file
+
+
+```Dockerfile
+# building a docker image for java project using gradle
+# mra = project name
+# gradle = repository name
+# jdk17 = image tag
+FROM registry.cellosco.pe/mra/gradle:jdk17 as builder
+WORKDIR /workspace
+
+COPY src src
+COPY build.gradle build.gradle
+COPY settings.gradle .
+
+RUN --mount=type=cache,target=/root/.gradle gradle build --x test
+RUN mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*-SNAPSHOT.jar)
+RUN echo $(ls -a)
+
+FROM registry.cellosco.pe/mra/openjdk:17-jdk-ubuntu
+USER root
+RUN apt update -y
+RUN apt install -y telnet
+RUN apt install -y iputils-ping
+RUN apt install curl -y
+#RUN apt install vim -y
+
+WORKDIR /workspace
+
+#RUN addgroup -S spring && adduser -S spring -G spring
+#USER spring:spring
+#RUN adduser spring -G root
+#RUN usermod -aG sudo spring
+RUN mkdir -p /var/log/mra/
+#RUN chown -R spring:spring /var/log/mra/
+
+ARG DEPENDENCY=/workspace/build/dependency
+COPY --from=builder ${DEPENDENCY}/BOOT-INF/lib app/lib
+COPY --from=builder ${DEPENDENCY}/META-INF app/META-INF
+COPY --from=builder ${DEPENDENCY}/BOOT-INF/classes app
+#This ENTRYPOINT command essentially runs your Java application using the specified classpath and main class
+ENTRYPOINT ["java","-cp","app:app/lib/*","net/celloscope/cloud/config/CloudConfigApplication"]
+```
+
+**`.gilab-ci.yaml`**
+
+```yaml
+stages:
+#  - test
+  - build
+  - update-stack
+  - deploy
+  - health-check
+
+variables:
+  IMAGE_NAME: iat-config
+  STACK_NAME: mra_stack
+  COMPOSE_FILE_NAME: stack_mra.yaml
+  TAG_INCREMENT: "1.0"
+  SWARM_MASTER_IP: 172.16.6.152
+  SWARM_MASTER_USER: alma
+  REGISTRY_URL: registry.cellosco.pe
+  PROJECT: mra
+  REPOSITORY: iat-config
+  APPLICATION_PORT: 8888
+  SERVICE_NAME: config-server
+#
+#test:
+#  stage: test
+#  only:
+#    - iat
+#  tags:
+#    - mra-build-agent-0
+#  script:
+#    - ./gradlew test
+
+
+before_script:
+  - - |
+      export CURRENT_TAG=$(curl --location --request GET "http://${REGISTRY_URL}/api/v2.0/projects/${PROJECT}/repositories/${REPOSITORY}/artifacts?page=1&page_size=10&with_tag=true&with_label=true&with_scan_overview=false&with_signature=false&with_immutable_status=false&with_accessory=false" \
+      --header 'accept: application/json' \
+      --header 'X-Accept-Vulnerabilities: application/vnd.security.vulnerability.report; version=1.1, application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0' \
+      --header 'Authorization: Basic YWRtaW46Y0VsbG8kY29QM19hZG1pbg==' \
+      --header 'Cookie: _gorilla_csrf=MTY5ODgzNTc1MnxJbFpyUkVsVWQzUnZSVGRXUVVvd1VrbzJRbFZvY0dNdlNscDRZVUZIUmpGUGRuQXpiVWs1ZEdacGEyczlJZ289fD0bMrKU9Wrg4XZt-rqJEhL0v5lyDY-QTt0Pn71_jMqp; sid=d13c988e7694f2893b3a69529dc5c203' | jq '.[0].tags[0].name' | bc)
+    - echo $CURRENT_TAG
+
+build:
+  stage: build
+  only:
+    - iat
+  tags:
+    - mra-build-agent-0
+  script:
+    - export NEW_TAG=$(bc <<< "$CURRENT_TAG + $TAG_INCREMENT")
+    - echo $NEW_TAG
+    - docker login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD $HARBOR_HOST
+    - docker build . -t $HARBOR_HOST/$HARBOR_PROJECT/$IMAGE_NAME:$NEW_TAG
+    - docker push $HARBOR_HOST/$HARBOR_PROJECT/$IMAGE_NAME:$NEW_TAG
+
+update-stack:
+  stage: update-stack
+  only:
+    - iat
+  tags:
+    - mra-build-agent-0
+  script:
+    - echo "Before update:"
+    - ssh $SWARM_MASTER_USER@$SWARM_MASTER_IP "cd /home/alma && cat $COMPOSE_FILE_NAME | grep $IMAGE_NAME"
+    - ssh "$SWARM_MASTER_USER@$SWARM_MASTER_IP" "cd /home/alma && sed -i 's/$IMAGE_NAME:[^:]\+/$IMAGE_NAME:$CURRENT_TAG/g' $COMPOSE_FILE_NAME"
+    - echo "After update:"
+    - ssh $SWARM_MASTER_USER@$SWARM_MASTER_IP "cd /home/alma && cat $COMPOSE_FILE_NAME | grep $IMAGE_NAME"
+
+
+deploy:
+  stage: deploy
+  only:
+    - iat
+  tags:
+    - mra-build-agent-0
+  script:
+    - ssh $SWARM_MASTER_USER@$SWARM_MASTER_IP "docker stack deploy --compose-file $COMPOSE_FILE_NAME $STACK_NAME"
+
+health-check:
+  stage: health-check
+  only:
+    - iat
+  tags:
+    - mra-build-agent-0
+  script:
+    - - |
+        ACTUAL_DEPLOYER_VERSION=$(ssh $SWARM_MASTER_USER@$SWARM_MASTER_IP "docker stack services $STACK_NAME | grep '$SERVICE_NAME' | cut -d ':' -f 2 | cut -d ' ' -f 1")
+        echo "Deployed Image Tag :"
+        echo "$ACTUAL_DEPLOYER_VERSION"
+        if [ "$CURRENT_TAG" != "$ACTUAL_DEPLOYER_VERSION" ]
+          then echo "Deployer image version mismatch."
+          exit 1
+        fi
+    - echo "Waiting 20 seconds for the application to start..."
+    - sleep 20
+    - - |
+        for i in {1..3}; do
+          echo "Attempt $i/$3..."
+          RESPONSE=$(ssh $SWARM_MASTER_USER@$SWARM_MASTER_IP "curl -s http://${SWARM_MASTER_IP}:${APPLICATION_PORT}/actuator/health")
+          echo "API Response:"
+          echo "$RESPONSE"
+          if [ $? -eq 0 ]; then
+            echo "Application is healthy."
+            exit 0
+          fi
+          echo "Application is not healthy yet. Retrying..."
+          sleep 5
+          done
+        echo "Health check failed after 3 attempts."
+        exit 1
+```
