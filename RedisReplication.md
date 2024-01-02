@@ -99,7 +99,7 @@ sudo systemctl status redis.service
 #### Start redis
 
 ```shell
-sudo systemctl start redis.service
+sudo systemctl start redis-server.service redis.service
 ```
 
 #### Redis version
@@ -536,7 +536,8 @@ sudo vim /etc/redis/redis.conf
 
 ```shell
 maxclients 10000                           # Max number of connected clients at the same time
-bind 127.0.0.1 10.0.0.1 ::1                # Listens on specific IPv4 addresses with IPv6
+supervised systemd
+bind 127.0.0.1 172.16.6.151 ::1            # Listens on specific IPv4 addresses with IPv6
 protected-mode no                          # Clients from other hosts to connect to Redis
 logfile /var/log/redis/redis-server.log  
 dbfilename dump.rdb                        # Dump file name
