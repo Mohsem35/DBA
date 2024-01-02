@@ -45,7 +45,7 @@ So, even if your PC is restarted, Redis can recover its data from these snapshot
 
 ## Redis Installation
 
-```
+```shell
 curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
 
 echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
@@ -54,7 +54,7 @@ sudo apt-get update
 sudo apt-get install redis-server
 sudo apt-get install redis
 ```
-```
+```shell
 sudo vim /etc/redis/redis.conf
 ```
 
@@ -74,7 +74,7 @@ supervised systemd
 . . .
 ```
 
-```
+```shell
 sudo systemctl enable redis-server --now
 sudo systemctl restart redis.service
 sudo systemctl status redis.service
@@ -98,13 +98,13 @@ sudo systemctl status redis.service
 
 #### Start redis
 
-```
+```shell
 sudo systemctl start redis.service
 ```
 
 #### Redis version
 
-```
+```shell
 redis-server -v
 Redis server v=7.2.1 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=95712a67f5005c28
 ```
@@ -112,7 +112,7 @@ Redis server v=7.2.1 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=95712a67
 
 #### Check if Redis is working
 
-```
+```shell
 redis-cli
 redis 127.0.0.1:6379> ping 
 PONG
@@ -120,7 +120,7 @@ PONG
 
 #### Redis server status
 
-```
+```shell
 sudo systemctl status redis-server.service
 ```
 
@@ -133,7 +133,7 @@ redis-cli -h 10.0.0.1 -p 6379 -a password
 
 #### Redis data directory
 
-```
+```shell
 127.0.0.1:6379> CONFIG get dir  
 1) "dir" 
 2) "/var/lib/redis" 
@@ -150,16 +150,16 @@ redis-cli INFO keyspace
 
 #### Delete/Empty a Redis database
 
-```
+```shell
 redis-cli -n 8 flushdb              # deletes specific db8
 ```
-```
+```shell
 redis-cli flushall                  # deletes all dbs
 ```
 
 #### Redis user list
 
-```
+```shell
 redis-cli
 127.0.0.1:6379> ACL USERS
 1) "default"
@@ -220,7 +220,7 @@ Redis database can be secured, such that any client making a connection needs to
 ```
 By default, this property is blank, which means no password is set for this instance. You can change this property by executing the following command.
 
-```
+```shell
 127.0.0.1:6379> CONFIG set requirepass "password" 
 OK 
 127.0.0.1:6379> CONFIG get requirepass 
@@ -253,7 +253,7 @@ In the above example, `DEL` is the command. If the key is deleted, then the outp
 
 #### Redis - Strings
 
-```
+```shell
 redis 127.0.0.1:6379> SET tutorialspoint redis 
 OK 
 redis 127.0.0.1:6379> GET tutorialspoint 
@@ -530,11 +530,11 @@ sudo systemctl start redis-server.service
 
 ## Redis configuration parameters that we should know
 
-```
+```shell
 sudo vim /etc/redis/redis.conf
 ```
 
-```
+```shell
 maxclients 10000                           # Max number of connected clients at the same time
 bind 127.0.0.1 10.0.0.1 ::1                # Listens on specific IPv4 addresses with IPv6
 protected-mode no                          # Clients from other hosts to connect to Redis
