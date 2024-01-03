@@ -233,10 +233,99 @@ I am executing the pg_basebackup command for replication as a root user. so all 
 
 ### Issues 
 
-replication করার পরে must pwnership change করতে হবে
+replication করার পরে must ownership change করতে হবে
 
 
 ```shell
 chown -R postgres:postgres /var/data/*
 chown -R postgres:postgres /var/lib/postgresql/14/main/*
 ```
+
+### New Requirments
+
+We need to make new tablespaces for year 2024(monthly)
+
+We will do the following tasks for both primary and secondary server(if configured)
+
+```shell
+sudo su
+```
+
+```shell
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m01
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m02
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m03
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m04
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m05
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m06
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m07
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m08
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m09
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m10
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m11
+sudo mkdir -p /var/data/postgres/ibprod/ibprod_logtbs_y2024m12
+```
+
+```shell
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m01
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m02
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m03
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m04
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m05
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m06
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m07
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m08
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m09
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m10
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m11
+sudo chown -R postgres:postgres /var/data/postgres/ibprod/ibprod_logtbs_y2024m12
+```
+```shell
+sudo su - postgres
+psql
+```
+
+```sql
+drop tablespace if exists ibprod_logtbs_y2024m01; create tablespace ibprod_logtbs_y2024m01 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m01';
+drop tablespace if exists ibprod_logtbs_y2024m02; create tablespace ibprod_logtbs_y2024m02 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m02';
+drop tablespace if exists ibprod_logtbs_y2024m03; create tablespace ibprod_logtbs_y2024m03 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m03';
+drop tablespace if exists ibprod_logtbs_y2024m04; create tablespace ibprod_logtbs_y2024m04 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m04';
+drop tablespace if exists ibprod_logtbs_y2024m05; create tablespace ibprod_logtbs_y2024m05 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m05';
+drop tablespace if exists ibprod_logtbs_y2024m06; create tablespace ibprod_logtbs_y2024m06 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m06';
+drop tablespace if exists ibprod_logtbs_y2024m07; create tablespace ibprod_logtbs_y2024m07 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m07';
+drop tablespace if exists ibprod_logtbs_y2024m08; create tablespace ibprod_logtbs_y2024m08 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m08';
+drop tablespace if exists ibprod_logtbs_y2024m09; create tablespace ibprod_logtbs_y2024m09 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m09';
+drop tablespace if exists ibprod_logtbs_y2024m10; create tablespace ibprod_logtbs_y2024m10 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m10';
+drop tablespace if exists ibprod_logtbs_y2024m11; create tablespace ibprod_logtbs_y2024m11 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m11';
+drop tablespace if exists ibprod_logtbs_y2024m12; create tablespace ibprod_logtbs_y2024m12 owner ibprod location '/var/data/postgres/ibprod/ibprod_logtbs_y2024m12';
+
+
+create table transaction_y2024m01 partition of transaction for values from ('2024-01-01 00:00:00') TO ('2024-01-31 23:59:59') tablespace ibprod_logtbs_y2024m01;
+create table transaction_y2024m02 partition of transaction for values from ('2024-02-01 00:00:00') TO ('2024-02-28 23:59:59') tablespace ibprod_logtbs_y2024m02;
+create table transaction_y2024m03 partition of transaction for values from ('2024-03-01 00:00:00') TO ('2024-03-31 23:59:59')tablespace ibprod_logtbs_y2024m03;
+create table transaction_y2024m04 partition of transaction for values from ('2024-04-01 00:00:00') TO ('2024-04-30 23:59:59')tablespace ibprod_logtbs_y2024m04;
+create table transaction_y2024m05 partition of transaction for values from ('2024-05-01 00:00:00') TO ('2024-05-31 23:59:59') tablespace ibprod_logtbs_y2024m05;
+create table transaction_y2024m06 partition of transaction for values from ('2024-06-01 00:00:00') TO ('2024-06-30 23:59:59') tablespace ibprod_logtbs_y2024m06;
+create table transaction_y2024m07 partition of transaction for values from ('2024-07-01 00:00:00') TO ('2024-07-31 23:59:59') tablespace ibprod_logtbs_y2024m07;
+create table transaction_y2024m08 partition of transaction for values from ('2024-08-01 00:00:00') TO ('2024-08-31 23:59:59') tablespace ibprod_logtbs_y2024m08;
+create table transaction_y2024m09 partition of transaction for values from ('2024-09-01 00:00:00') TO ('2024-09-30 23:59:59') tablespace ibprod_logtbs_y2024m09;
+create table transaction_y2024m10 partition of transaction for values from ('2024-10-01 00:00:00') TO ('2024-10-31 23:59:59') tablespace ibprod_logtbs_y2024m10;
+create table transaction_y2024m11 partition of transaction for values from ('2024-11-01 00:00:00') TO ('2024-11-30 23:59:59') tablespace ibprod_logtbs_y2024m11;
+create table transaction_y2024m12 partition of transaction for values from ('2024-12-01 00:00:00') TO ('2024-12-31 23:59:59') tablespace ibprod_logtbs_y2024m12;
+
+
+create index transaction_y2024m01_transactioncreatedon on transaction_y2024m01 (createdon);
+create index transaction_y2024m02_transactioncreatedon on transaction_y2024m02 (createdon);
+create index transaction_y2024m03_transactioncreatedon on transaction_y2024m03 (createdon);
+create index transaction_y2024m04_transactioncreatedon on transaction_y2024m04 (createdon);
+create index transaction_y2024m05_transactioncreatedon on transaction_y2024m05 (createdon);
+create index transaction_y2024m06_transactioncreatedon on transaction_y2024m06 (createdon);
+create index transaction_y2024m07_transactioncreatedon on transaction_y2024m07 (createdon);
+create index transaction_y2024m08_transactioncreatedon on transaction_y2024m08 (createdon);
+create index transaction_y2024m09_transactioncreatedon on transaction_y2024m09 (createdon);
+create index transaction_y2024m10_transactioncreatedon on transaction_y2024m10 (createdon);
+create index transaction_y2024m11_transactioncreatedon on transaction_y2024m11 (createdon);
+create index transaction_y2024m12_transactioncreatedon on transaction_y2024m12 (createdon);
+```
+> _Note_: After doing the same tasks in secondary server, we may need to start/restart the secondary server
+
