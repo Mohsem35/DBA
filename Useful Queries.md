@@ -33,3 +33,14 @@ ORDER BY pg_table_size (pgc.oid) DESC;
 ```sql
 SELECT relname, last_vacuum, last_autovacuum FROM pg_stat_user_tables;
 ```
+- Insert exactly same data from existing rows except for 2 colums
+
+```sql
+-- add 'BV' to existing ids
+-- change profile to 'buet-vetting'
+INSERT INTO common.properties
+(id, application, profile, "label", "key", "value")
+SELECT id || 'BV', application, 'buet-vetting', "label", "key", "value"
+FROM common.properties
+where profile = 'test';
+```
