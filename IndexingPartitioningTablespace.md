@@ -329,3 +329,7 @@ create index transaction_y2024m12_transactioncreatedon on transaction_y2024m12 (
 ```
 > _Note_: After doing the same tasks in secondary server, we may need to start/restart the secondary server
 
+```sql
+pg_dump --schema-only -h 127.0.0.1 -U mraims -d mraims -n template > schema_mraims_template_07_oct_4_00_pm.sql
+```
+
