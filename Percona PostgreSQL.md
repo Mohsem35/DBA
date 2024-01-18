@@ -62,7 +62,6 @@ Node1: 172.16.7.90
 sudo apt-get install etcd
 cat /etc/default/etcd
 
-
 ETCD_NAME=node1 ~
 ETCD_INITIAL_CLUSTER="node1=http://192.168.1.11:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="devops_token"
@@ -72,12 +71,9 @@ ETCD_DATA_DIR="/var/lib/etcd/postgresql"
 ETCD_LISTEN PEER_URLS="http://192.168.1.11:2380" ETCD_LISTEN_CLIENT_URLS="http://192.168.1.11:2379,http://localhost:2379"
 ETCD_ADVERTISE_CLIENT_URLS="http://192.168.1.11:2379"
 
-
 sudo systemctl restart etcd
 sudo etcdctl member list
-```
 
-```shell
 # node2
 sudo apt-get install etcd
 cat /etc/default/etcd
@@ -93,11 +89,9 @@ ETCD_LISTEN_CLIENT_URLS="http://192.168.1.12:2379,http://localhost:2379"
 ETCD_ADVERTISE_CLIENT_URLS="http://192.168.1.12:2379"
 $ sudo systemctl restart etcd
 
-# now back to node1 and run the following command
+# node 1
 sudo etcdctl member add node2 http://192.168.1.12:2380
-```
 
-```shell
 # node3
 sudo apt-get install etcd
 cat /etc/default/etcd
@@ -113,9 +107,9 @@ ETCD_LISTEN PEER_URLS="http://192.168.1.13:2380"
 ETCD_LISTEN_CLIENT_URLS="http://192.168.1.13:2379,http://localhost:2379"
 ETCD_ADVERTISE_CLIENT_URLS="http://192.168.1.13:2379"
 
-# now back to node1 and run the following command
-$ sudo systemctl restart etcd
-$ sudo etcdctl member add node3 http://192.168.1.13:2380
+# node 1
+sudo systemctl restart etcd
+sudo etcdctl member add node3 http://192.168.1.13:2380
 ```
 
 Now check the members list from node1
@@ -129,9 +123,9 @@ In the context of Patroni, the term **`watchdog`** refers to a mechanism used fo
 
 **`Softdog`** is a software version of Watchdog.
 
-Run the following lines at node1, node2 and node3
 
 ```shell
+# node1, node2, node 3
 sudo sh -c 'echo "softdog" >> /etc/modules'
 sudo sh -c 'echo "KERNEL==\"watchdog\", OWNER=\"postgres\", GROUP=\"postgres\"" >> /etc/udev/rules.d/61-watchdog.rules'
 
@@ -157,11 +151,10 @@ sudo systemctl stop postgresql
 sudo rm -fr /var/lib/postgresql/12/main
 ```
 
-### Patroni
-
-Run the following lines at node1
+### Patroni 
 
 ```shell
+# node 1
 # install from the percona repository as well
 sudo apt-get install patroni
 
@@ -172,17 +165,27 @@ sudo rm -rf /var/lib/postgresql/12/*
 # restart the service
 sudo systemctl restart patroni
 
-# check status of the cluster
-sudo patronictl -c /etc/patroni/config.yml list 
-```
-
-For node2 and node3
-
-```shell
 # remove everything from data directory
 sudo su
 rm -rf /var/lib/postgresql/12/*
 systemctl start patroni
+
+# check status of the cluster
+sudo patronictl -c /etc/patroni/config.yml list
+```
+have to do the previous steps in node 2 and node 3
+
+```shell
+# node2 and node3
+# remove everything from data directory
+sudo su
+rm -rf /var/lib/postgresql/12/*
+systemctl start patroni
+ps aux | grep postgres
+
+# node 1
+# check status of the cluster
+sudo patronictl -c /etc/patroni/config.yml list
 ```
 
 > some confusion at 13:12 seconds of the video
