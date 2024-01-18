@@ -93,6 +93,13 @@ $ sudo systemctl restart etcd
 # node 1
 sudo etcdctl member add node2 http://192.168.1.12:2380
 
+# output
+Added member named node2 with ID c06ed38e1cdab698 to cluster
+
+ETCD_NAME="node2"
+ETCD_INITIAL_CLUSTER="node2=http://172.16.7.91:2380,node1=http://172.16.7.90:2380"
+ETCD_INITIAL_CLUSTER_STATE="existing"
+
 # node3
 sudo apt-get install etcd
 cat /etc/default/etcd
