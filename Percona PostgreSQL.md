@@ -189,3 +189,121 @@ sudo patronictl -c /etc/patroni/config.yml list
 ```
 
 > some confusion at 13:12 seconds of the video
+> 
+### HAproxy
+
+I am going to install HAproxy in another node like my personal computer
+
+- We will create 2 groups. `primary` and `secondary`
+- Write --> 5000
+- Reads --> 5001
+
+```shell
+sudo apt-get install haproxy
+sudo cat /etc/haproxy/haproxy.cfg
+
+fernando@fernando-MacBookPro:~$ more /etc/haproxy/haproxy.cfg
+global
+    maxconn 100
+defaults
+    Log global
+    mode tcp
+    retries 2
+    timeout client 30m
+    timeout connect 4s
+    timeout server 30m
+    timeout check 5s
+
+listen stats
+    mode http
+    bind *:7000
+    stats enable
+    stats uri /
+
+listen primary
+    bind *:5000
+    option httpchk OPTIONS /master
+    http-check expect status 200
+    default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
+    server node1 node1:5432 maxconn 100 check port 8008
+    server node2 node2:5432 maxconn 100 check port 8008
+    server node3 node3:5432 maxconn 100 check port 8008
+
+listen standbys
+    balance roundrobin
+    bind *:5001
+    option httpchk OPTIONS /replica
+    http-check expect status 200
+    default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
+    server node1 node1:5432 maxconn 100 check port 8008
+    server node2 node2:5432 maxconn 100 check port 8008
+    server node3 node3:5432 maxconn 100 check port 8008
+```
+```shell
+# store password in a file
+$ echo "localhost:5000:postgres:postgres:vagrant" > ~/.pgpass
+$ echo "localhost:5001:postgres:postgres:vagrant" >> ~/.pgpass
+$ chmod 0600 ~/.pgpass
+
+# run the following commands where the HAproxy package is installed
+# test reads
+$ psql -Upostgres -hlocalhost -p5001 -t -c "select inet_server_addr()"
+
+# test writes
+psql -Upostgres -hlocalhost -p5000 -t -c "select inet_server_addr()"
+```
+
+### Workload
+
+create a database with table in node for testing purpose
+
+```shell
+# run the following commands where the HAproxy package is installed
+sudo apt-get install python3-psycopg2
+curl -LO https://raw.githubusercontent.com/jobinau/pgscripts/main/patroni/HAtester.py
+chmod +x HAtester.py
+
+# Writes
+$ ./HAtester.py 5000
+
+Reads
+$ ./HAtester.py 5001 
+```
+
+### Testing
+
+Postgres is managed by Patroni here
+
+1. Loss of network communication
+  - Unplug network cable from one node
+      - Frist a replica
+      - Then the primary
+  - Unplug network cable from one replica and the primary
+    - split brain?  
+
+```shell
+sudo su
+watch patronictl -c /etc/patroni/config.yml lsit
+```
+   
+2. Power outrage
+   - Unplug power cable from the primary
+3. SEGFAULT
+   - Simulating OOM/creash with "kill -9"
+  
+4. CPU Satuaration
+
+```shell
+sysbench cpu --threads=3 --time=0 run
+```
+
+5. Killing Patroni on the primary
+6. Manual failover(unplanned event) and switchover(planned activity)
+   - What is te difference between two?
+8. 
+
+```shell
+# node 1
+sudo patronictl -c /etc/patroni/config.yml switchover
+sudo patronictl -c /etc/patroni/config.yml failover
+```
