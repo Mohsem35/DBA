@@ -62,10 +62,10 @@ Node1: 172.16.7.90
 sudo apt-get install etcd
 cat /etc/default/etcd
 
-ETCD_NAME=node1 ~
+ETCD_NAME="node1"
 ETCD_INITIAL_CLUSTER="node1=http://192.168.1.11:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="devops_token"
-ETCD_INITIAL_CLUSTER_STATE="new" ~
+ETCD_INITIAL_CLUSTER_STATE="new"
 ETCD_INITIAL_ADVERTISE_PEER_URLS="http://192.168.1.11:2380"
 ETCD_DATA_DIR="/var/lib/etcd/postgresql"
 ETCD_LISTEN PEER_URLS="http://192.168.1.11:2380"
@@ -79,10 +79,10 @@ sudo etcdctl member list
 sudo apt-get install etcd
 cat /etc/default/etcd
 
-ETCD_NAME=node2 ~
+ETCD_NAME="node2"
 ETCD_INITIAL_CLUSTER="node1=http://192.168.1.11:2380,node2=http://192.168.1.12:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="devops_token"
-ETCD_INITIAL_CLUSTER_STATE="existing" ~
+ETCD_INITIAL_CLUSTER_STATE="existing"
 ETCD_INITIAL_ADVERTISE_PEER_URLS="http://192.168.1.12:2380"
 ETCD_DATA_DIR="/var/lib/etcd/postgresql"
 ETCD_LISTEN_PEER_URLS="http://192.168.1.12:2380"
@@ -104,9 +104,8 @@ ETCD_INITIAL_CLUSTER_STATE="existing"
 sudo apt-get install etcd
 cat /etc/default/etcd
 
-ETCD_NAME=node3
-ETCD_INITIAL_CLUSTER="node1=http://192.168.1.11:2380,node2=http://192.168.1.13:2380,
-node3=http://192.168.1.13:2380"
+ETCD_NAME="node3"
+ETCD_INITIAL_CLUSTER="node1=http://192.168.1.11:2380,node2=http://192.168.1.13:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="devops_token"
 ETCD_INITIAL_CLUSTER_STATE="existing"
 ETCD_INITIAL_ADVERTISE_PEER_URLS="http://192.168.1.13:2380"
