@@ -44,3 +44,16 @@ SELECT id || 'BV', application, 'buet-vetting', "label", "key", "value"
 FROM common.properties
 where profile = 'test';
 ```
+### Errors in MRA
+
+```shell
+ubuntu@MRA-project:~$ pg_dump --schema-only -U mra -d mra -n common > mra_schemaonly_common.sql
+pg_dump: error: query failed: ERROR:  permission denied for schema common
+pg_dump: error: query was: LOCK TABLE common.bank IN ACCESS SHARE MODE
+```
+solution
+
+```sql
+sudo pg_dump --schema-only -U postgres -d mra -Fc -n common > mra_schemaonly_common.sql
+```
+
