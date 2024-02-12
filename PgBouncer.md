@@ -10,6 +10,7 @@ sudo apt-get install pgbouncer -y
 # permissions change to postgres user
 sudo su
 chown postgres:postgres /etc/pgbouncer/ -R
+usermod -a -G sudo postgres
 sudo su - postgres
 cd /etc/pgbouncer/
 
