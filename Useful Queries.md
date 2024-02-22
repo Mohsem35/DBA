@@ -11,6 +11,19 @@ vacuum full analyze public.account;
 set client_min_messages = 'warning';
 vacuum full;
 ```
+- kill all connections
+```shell
+postgres=# SELECT 
+    pg_terminate_backend(pid) 
+FROM 
+    pg_stat_activity 
+WHERE 
+    -- don't kill my own connection!
+    pid <> pg_backend_pid()
+    -- don't kill the connections to other databases
+    AND datname = 'ibprod'
+    ;
+```
 
 - How many dead tuples are there in a database
 
