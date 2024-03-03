@@ -1,16 +1,16 @@
-First we need to install ‘pgcrypto’ extension into DB
+_**1st step**: Install `pgcrypto` extension to the specific database_
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 ```
 
-Now confirm if this extension is installed or not.
+Now confirm if this extension is installed or not
 
 ```sql
 select * from pg_available_extensions where "name"='pgcrypto';
 ```
 
-Now create the table using this DDL.
+_**2nd Step**: Now create the table on whose you want to apply encryption using DDL_
 
 ```sql
 CREATE TABLE nda.voter_details (
@@ -42,9 +42,9 @@ CREATE TABLE nda.voter_details (
 	CONSTRAINT uk_national_id_voter_detail UNIQUE (national_id)
 );
 ```
+_**3rd Step**: Now populate the `nda.voter_details` table with dump_
 
-
-Migrate existing NDA database table into newly created table
+_**4th Step**: Migrate existing NDA database table into newly created table_
 
 ```sql
 INSERT INTO nda.voter_details (
@@ -100,7 +100,10 @@ SELECT
   digest(src.date_of_birth, 'sha256')
 FROM nda.voter_details AS src;
 ```
-
-In this query replace **`p#@yuSuF`** with secret key which is stored in the vault.
+- `nda.voter_details` টেবিল হল এখানে src
+- বাকি সব column encrypted হবে, যার encryption password হচ্ছে **`p#@yuSuF`**
+- কিন্তু শেষ ৩ টা column হবে hash format কারণ `sha256` format use করা হইছে
+  
+In this query replace **`p#@yuSuF`** with secret key which is stored in the vault. এই secret key ছাড়া data decrypt করা সম্ভব হবে না 
 
 
