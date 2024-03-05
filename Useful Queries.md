@@ -58,8 +58,10 @@ FROM common.properties
 where profile = 'test';
 ```
 
+- [Eliminating Duplicate Entries From PostgreSQL](https://medium.com/@nidhig631/delete-duplicate-records-from-the-table-when-all-duplicate-rows-have-the-same-value-32a8973eedd0)
+
 ```sql
-delete from <table_name> a using <table_name> b where a=b and a.ct<row_name>>b.ct<row_name>;
+delete from <table_name> a using <table_name> b where a=b and a.ct<column_name>>b.ct<column_name>;
 ```
 
 ### Errors in MRA
