@@ -57,6 +57,11 @@ SELECT id || 'BV', application, 'buet-vetting', "label", "key", "value"
 FROM common.properties
 where profile = 'test';
 ```
+
+```sql
+delete from <table_name> a using <table_name> b where a=b and a.ct<row_name>>b.ct<row_name>;
+```
+
 ### Errors in MRA
 
 ```shell
