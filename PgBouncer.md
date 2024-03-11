@@ -56,3 +56,10 @@ pgbench -h 172.16.7.90 -p 6432 -c 10 -t 10000 -U testuser -d testdb
 pgbench -h 172.16.7.90 -p 5432 -c 10 -t 10000 -U testuser -d testdb
 ```
 
+Refferences:
+
+- [Efficient PostgreSQL Management: A Complete Guide to Installing and Configuring ](https://www.linkedin.com/pulse/efficient-postgresql-management-complete-guide-installing-configuring-rxkzc/)
+- [PgBouncer Installation, Configuration and Use Cases for Better Performance](https://medium.com/swlh/pgbouncer-installation-configuration-and-use-cases-for-better-performance-1806316f3a22)
+- [PGBouncer Installation on Linux](https://help.datagaps.com/articles/#!etl-validator/pgbouncer-installation-on-linux/a/h2_812968334)
+- [Installing PgBouncer on Ubuntu/Debian](https://www.scaleway.com/en/docs/tutorials/install-pgbouncer/)
+- [Setup PostgreSQL Connection Pooling with PgBouncer](https://medium.com/@sozcandba/setup-postgresql-connection-pooling-with-pgbouncer-eb160bb0ca0a)
