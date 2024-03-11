@@ -11,6 +11,19 @@ vacuum full analyze public.account;
 set client_min_messages = 'warning';
 vacuum full;
 ```
+- kill all connections
+```shell
+postgres=# SELECT 
+    pg_terminate_backend(pid) 
+FROM 
+    pg_stat_activity 
+WHERE 
+    -- don't kill my own connection!
+    pid <> pg_backend_pid()
+    -- don't kill the connections to other databases
+    AND datname = 'ibprod'
+    ;
+```
 
 - How many dead tuples are there in a database
 
@@ -44,3 +57,23 @@ SELECT id || 'BV', application, 'buet-vetting', "label", "key", "value"
 FROM common.properties
 where profile = 'test';
 ```
+
+- [Eliminating Duplicate Entries From PostgreSQL](https://medium.com/@nidhig631/delete-duplicate-records-from-the-table-when-all-duplicate-rows-have-the-same-value-32a8973eedd0)
+
+```sql
+delete from <table_name> a using <table_name> b where a=b and a.ct<column_name>>b.ct<column_name>;
+```
+
+### Errors in MRA
+
+```shell
+ubuntu@MRA-project:~$ pg_dump --schema-only -U mra -d mra -n common > mra_schemaonly_common.sql
+pg_dump: error: query failed: ERROR:  permission denied for schema common
+pg_dump: error: query was: LOCK TABLE common.bank IN ACCESS SHARE MODE
+```
+solution
+
+```sql
+sudo pg_dump --schema-only -U postgres -d mra -Fc -n common > mra_schemaonly_common.sql
+```
+
