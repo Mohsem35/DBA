@@ -40,8 +40,17 @@ Some key features and characteristics of Amazon Web Services (AWS) Relational Da
 
 Overall, these features provide flexibility and scalability for managing relational databases on AWS RDS, catering to various performance and cost requirements.
 
+
+
 #### How to initialize RDS instance
 
 _1st step: Create subnet group for RDS_
 
 Amazon RDS -> click on `Subnet groups` form left side bar -> click on `Create DB subnet group` -> give specifice `Name`, `Description`, `VPC` ->  select `Availability Zones` according to the following pictures.
+
+
+
+
+<img width="750" alt="Screenshot 2024-03-11 at 3 17 55 PM" src="https://github.com/Mohsem35/DBA/assets/58659448/f1e03c4d-29ae-4bfe-b48b-e560d1adffd3">
+
+<img width="750" alt="Screenshot 2024-03-11 at 3 18 29 PM" src="https://github.com/Mohsem35/DBA/assets/58659448/38101f74-5892-4d61-a6fb-9f14366cd6d0">
