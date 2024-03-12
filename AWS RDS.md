@@ -127,3 +127,30 @@ These restrictions and features are designed to ensure data consistency, high av
 
 - Time between the DR event and full recovery
 - Influenced by process, staff, tech and documentation
+
+
+#### RDS Backups
+
+Some aspects of managing backups for Amazon RDS (Relational Database Service) instances on AWS. Let's break down and clarify each point:
+
+1. **First snapshot size**: The initial snapshot of an RDS instance is indeed a **full backup** of the data stored in the database at that point in time. This snapshot captures the entire size of the consumed data.
+
+2. **Manual snapshot retention**: When you manually create snapshots of your RDS instances, these snapshots will persist in your AWS account until you explicitly delete them. Unlike automatic snapshots, _manual snapshots do not have a predefined retention period._
+
+3. **Automatic snapshots**: AWS RDS provides the capability to automatically take snapshots of your databases at regular intervals. These **snapshots are incremental**, meaning they **only capture the changes since the last snapshot**, thus reducing storage costs and time required for backup.
+
+3. **Transaction logs to S3**: RDS supports continuous backups by capturing transaction logs and storing them in Amazon S3. These logs allow you to **restore your database to any specific point in time** within the retention period, typically up to the last five minutes.
+
+4. **Automatic cleanup period**: AWS allows you to configure the retention period for automatic snapshots, which can range from **0 to 35 days**. After this period, the snapshots are **automatically deleted by AWS**.
+
+5. **Retention of deleted databases**: When you delete an RDS database instance, you have the option to retain its automated backups and/or manual snapshots. However, these retained backups will still be subject to the configured retention period, after which they will be automatically deleted.
+
+
+
+**Points to remember**
+
+- When performing a **restore**, RDS creates a **new RDS instance** with a new endpoint address.
+- When restoring a manual snapshot, you are setting it to a single point in time means you are restoring data to the exact state it was in at the time the snapshot was taken. This influences the RPO value.
+- Unlike manual snapshots, which capture data at a specific point in time, automated backups capture changes at regular intervals (typically daily) and allow you to restore the database to any 5-minute point in time within the retention period.
+- Backups are restored and transaction logs are replayed to bring DB to desired point in time.
+- Restores aren't fast, think about RTO.
