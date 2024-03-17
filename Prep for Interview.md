@@ -1,4 +1,3 @@
-![Operators-used-in-PostgreSQL](https://github.com/Mohsem35/DBA/assets/58659448/58937e52-7f20-43bf-ba29-53aec98a9f61)
 Now database administrator interview will consist of three types of questions. 
 
 1. **`Research-based`** questions 
@@ -220,7 +219,127 @@ Operators are the special characters or words that are used mainly in the WHERE 
 
 Operators used in PostgreSQL
 
+![Operators-used-in-PostgreSQL](https://github.com/Mohsem35/DBA/assets/58659448/58937e52-7f20-43bf-ba29-53aec98a9f61)
 
+_Q31. Explain the term ‘Sequence’ in PostgreSQL._
+
+The Sequence is a **generator** that produces a **progressive number** that can help **synchronize the keys across multiple rows or tables** and **construct a single primary key automatically**.
+
+A sequence in PostgreSQL can be defined as a **user-defined schema-bound object** that generates an **integer sequence** based on a specific requirement.
+
+
+_Q32. Differentiate between clustered and non-clustered indexes._
+
+Clustered Index  | Non-Clustered Index
+------------- | -------------
+It is **faster** than the non-clustered index | It is relatively slower as compared to the clustered index
+**Index** is considered the **main data** in the clustered index  | In the case of a non-clustered index, the index is the copy of data
+The clustered index has the ability to **store data naturally on the disk**  | The non-clustered index cannot naturally store data on the disk
+It requires **lesser memory** for operations as compared to the non-clustered index  | The non-clustered index requires more memory to perform operations
+A **table** can consist of **only one clustered index**  | A table can contain multiple non-clustered indexes
+
+
+_Q33. What is the procedure for storing binary data in PostgreSQL?_
+
+The users can store binary data in PostgreSQL in two distinct ways:
+
+- By using the data type **`BYTEA`**
+
+```sql
+CREATE TABLE binary_data_bytea (
+    id SERIAL PRIMARY KEY,
+    data BYTEA
+);
+```
+- By using the **`Large Object(LOB)`** feature
+
+```sql
+-- 'Create' a Large Object
+-- returns a unique OID 
+SELECT lo_create(0);
+
+-- 'Write' binary data to the Large Object
+-- specifying the OID and the binary data to be written
+SELECT lo_write(oid, 'binary_data'::bytea);
+
+-- 'Read' from the Large Object
+SELECT lo_read(oid);
+
+-- 'Delete' the Large Object (optional) if it's no longer needed
+SELECT lo_unlink(oid);
+```
+
+_Q34. What do you understand by the enable-debug command in PostgreSQL?_
+
+The enable-debug command in PostgreSQL is the command that **assists in compiling all libraries and applications**.
+
+It has a **few debugging symbols** that make it easier for developers to **find flaws and other issues** that can arise **during the script’s execution**. This process can slow down or impede the system when it is being used, increasing the size of the binary file.
+
+When building PostgreSQL from the source code, developers can include debugging symbols by configuring the build process with the **`--enable-debug`** flag
+
+_Q35. Describe the method by which you can change the column data type in PostgreSQL._
+
+
+The data type of one or more columns in PostgreSQL can be changed by using the following commands along with the TYPE keyword:
+
+```sql
+ALTER TABLE table_name
+ALTER COLUMN column_name TYPE new_data_type;
+```
+
+_Q36. How can the first 5 records be selected in PostgreSQL?_
+
+The `LIMIT` keyword can be used to select the first  `N` records in PostgreSQL
+
+```sql
+SELECT * FROM Employee 
+
+-- arranges the rows in descending order based on the 'Salary' column
+ORDER BY Salary DESC 
+LIMIT 5;
+```
+
+_Q:38 Does PostgreSQL support Full-Text Search?_
+
+When a search is conducted on a portion of text contained in a large body of electronically recorded text, it is referred to as a full-text search, the results that are returned may include all or some of the search terms. Traditional searches,however, would only produce exact matches.
+
+Yes, PostgreSQL supports the Full-Text Search feature. It is a powerful tool in PostgreSQL and can be enhanced by incorporating functions like result highlighting or by creating your own unique dictionaries or functions.
+
+```sql
+-- create table
+CREATE TABLE articles (
+    id SERIAL PRIMARY KEY,
+    content TEXT
+);
+
+-- insert data
+INSERT INTO articles (content) VALUES
+    ('PostgreSQL is a powerful relational database management system.'),
+    ('It supports advanced features like Full-Text Search.'),
+    ('Full-Text Search enables efficient searching of text data.'),
+    ('PostgreSQL is widely used for various applications.');
+
+-- Create a Full-Text Search Index
+CREATE INDEX content_idx ON articles USING gin(to_tsvector('english', content));
+```
+This creates a **GIN index** on the **`content` column** after **converting** it to a **tsvector type** using the **English configuration**.
+
+```sql
+-- Perform a Full-Text Search
+SELECT * FROM articles WHERE to_tsvector('english', content) @@ to_tsquery('english', 'PostgreSQL');
+```
+
+This query searches the content column for occurrences of the word **'PostgreSQL'** using **full-text search**. The `@@` operator checks if the tsvector representation of the content column matches the tsquery representation of the search term
+
+```sql
+-- result
+ id |                     content                     
+----+------------------------------------------------
+  1 | PostgreSQL is a powerful relational database management system.
+  4 | PostgreSQL is widely used for various applications.
+(2 rows)
+
+```
 
 [Top 50 PostgreSQL Interview Questions and Answers](https://intellipaat.com/blog/interview-question/postgresql-interview-questions/#postgresql_interview_questions_for_2_to_3_years_of_experience)
 
