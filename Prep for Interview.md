@@ -39,5 +39,51 @@ I would then give the other person time to respond, listen to their ideas, and t
 
 **Differing opinions is healthy in a team** and it shows both people care about how the work is done, and providing the company's priorities come first, **I have no problem being proved wrong.**
 
+_Q4. How do you handle stress and pressure?_
+
+
+I handle stress and pressure by always ensuring my work is organized, and by **prioritizing tasks based on the needs of my employer**. I prefer it when I am busy, so I believe I am at my best when I must deliver on multiple tasks and responsibilities.
+
+**I handle stress by remaining calm, keeping physically and mentally fit**, being mindful of what I need to do on a daily basis in my work, and **also looking ahead to foresee any potential problems that could occur**.
+By combining all of these things, I am able to confidently handle the stress and pressure that comes with being a Database
+
+_Q5. Why do you want to leave your current job?_
+
+I want to leave my current job simply because **I am ready for a fresh challenge with a new organization** that has ambitious plans, always pushes the **boundaries of innovation, and supports its staff to be the best they can be**.
+
+My current employer has been great to work for, we've **achieved many positive things** whilst I have been working there, and the team I've been a part of have been very supportive.
+
+However, the time for me to move on has now come and I've been waiting for a job as a Database Administrator to be advertised with your company. As soon as the job was advertised, I was
+ready to apply."
+
+
+_Q6. What are the most important skills and qualities needed to be a Database Administrator?_
+
+**TIP**: This question often catches candidates out because they think they know the answer, but when it comes to listing the skills and qualities whilst under pressure in an interview, **they struggle**. That is why it is so important to **read the job description** before you attend your interview.
+
+
+The most important skills and qualities needed to be a competent and effective Database Administrator include **in-depth knowledge and understanding of company databases, how they operate, query languages and access rights**, and the ability to prioritize tasks based on the needs of the department or organization you are working for.
+
+You need **exceptional planning and organizing skills**, the ability to troubleshoot problems quickly, **work closely with departmental technical and non-technical team members**, and the understanding of how important it is to keep updated with **database developments, laws, and compliance regulations**.
+
+**Critical-thinking and analytical skills** are also needed including the ability to explain technical concepts to non-technical individuals. Other essential skills and qualities needed to be a Database Administrator include planning and forecasting skills, the **ability to identify problems using a logical approach**, and the understanding of **how important it is** to keep and maintain accurate records.
+
+
+[Top 50 PostgreSQL Interview Questions and Answers](https://intellipaat.com/blog/interview-question/postgresql-interview-questions/#postgresql_interview_questions_for_2_to_3_years_of_experience)
+
+
+[Top 50+ Most Asked PostgreSQL Interview Questions for 2024](https://www.simplilearn.com/postgresql-interview-questions-answers-article)
+
+[Top PostgreSQL developer interview questions and answers 2024](https://www.turing.com/interview-questions/postgresql)
+
+[PostgreSQL DBA Interview Questions](https://nbcampus.com/tech-interview-made-easy/postgresql-dba/?v=87a47565be47)
+
+[PostgreSQL Interview Questions for Beginners](https://www.onlineinterviewquestions.com/postgresql-interview-questions/)
+
+[Database Administrator (DBA) interview questions and answers](https://resources.workable.com/database-administrator-dba-interview-questions)
+
+
+[Top Database Administrator (DBA) Interview Questions for 2023](https://www.shiksha.com/online-courses/articles/database-administrator-dba-interview-questions/)
+
 
  - Generated with https://kome.ai
