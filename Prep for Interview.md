@@ -1,4 +1,4 @@
-
+![Operators-used-in-PostgreSQL](https://github.com/Mohsem35/DBA/assets/58659448/58937e52-7f20-43bf-ba29-53aec98a9f61)
 Now database administrator interview will consist of three types of questions. 
 
 1. **`Research-based`** questions 
@@ -221,8 +221,11 @@ Operators are the special characters or words that are used mainly in the WHERE 
 Operators used in PostgreSQL
 
 
+![Operators-used-in-PostgreSQL](https://github.com/Mohsem35/DBA/assets/58659448/01e3d945-ae30-49bb-8e71-618d25df88fb)
+
 
 [Top 50 PostgreSQL Interview Questions and Answers](https://intellipaat.com/blog/interview-question/postgresql-interview-questions/#postgresql_interview_questions_for_2_to_3_years_of_experience)
+
 
 
 [Top 50+ Most Asked PostgreSQL Interview Questions for 2024](https://www.simplilearn.com/postgresql-interview-questions-answers-article)
