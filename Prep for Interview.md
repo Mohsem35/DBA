@@ -12,6 +12,8 @@ you **download a copy of the job description and read it before your interview**
 clickup.com
 
 
+### Interactive one to one questions
+
 _Q1. Tell me about yourself._
 
 SUGGESTED ANSWER:
@@ -67,6 +69,157 @@ The most important skills and qualities needed to be a competent and effective D
 You need **exceptional planning and organizing skills**, the ability to troubleshoot problems quickly, **work closely with departmental technical and non-technical team members**, and the understanding of how important it is to keep updated with **database developments, laws, and compliance regulations**.
 
 **Critical-thinking and analytical skills** are also needed including the ability to explain technical concepts to non-technical individuals. Other essential skills and qualities needed to be a Database Administrator include planning and forecasting skills, the **ability to identify problems using a logical approach**, and the understanding of **how important it is** to keep and maintain accurate records.
+
+
+### PostgreSQL technical questions
+
+_Q1. What is PostgreSQL?_
+
+PostgreSQL, commonly referred to as Postgres, **powers applications with its robust and open-source relational database management system**. Developers leverage its extensive features, such as **Function Overloading** and **Table Inheritance**, to create advanced applications. PostgreSQL seamlessly operates across major operating systems, including Windows, UNIX, macOS, and Linux.
+
+
+_Q2. What are the advantages of PostgreSQL?_
+
+The advantages of PostgreSQL include:
+
+1. PostgreSQL is **highly fault-tolerant**, owing to its **feature of write-ahead logging**.
+2. It is flexible and easy to learn.
+3. It supports a **variety of replication methods**.
+4. It can be **used for large-scale web applications** because of its **powerful and robust** nature.
+5. As the source code of PostgreSQL is available for free due to its open-source license, users can edit and modify it easily according to their business requirements.
+
+_Q3. Define a non-clustered index_
+
+In PostgreSQL, a non-clustered index is like an **index at the back of a book**. It tells you **where to find information** without actually rearranging the book itself. Here are some key points:
+
+In a non-clustered index, the **order of the index rows differs from the physical order of the real data**. The leaf pages of a non-clustered index instead **contain pointers to the real data** rather than the actual data itself. Its main advantage is that it provides faster access to data.
+
+To create a non-clustered index in PostgreSQL, you typically use the `CREATE INDEX` statement, specifying the columns to be indexed and optionally additional parameters for customization such as index name, uniqueness, and index type. Here's a basic example:
+
+```sql
+CREATE INDEX idx_name ON table_name (column1, column2);
+```
+This statement creates a non-clustered index named `idx_name` on `table_name` for the columns "column1" and "column2".
+
+They are useful for **speeding up read operations like `SELECT` queries** because they provide a shortcut to finding the rows you're interested in. However, they can introduce some **overhead during write operations** (INSERT, UPDATE, DELETE) because changes to the table data might require updates to the index as well.
+
+You can create **multiple non-clustered indexes on a single table**, each targeting different columns or combinations of columns
+
+
+_Q4. Which data types are used in PostgreSQL?_
+
+The following data types are used in PostgreSQL:-
+
+- Numeric data type (Integer, Float)
+- Geometric primitives
+- Boolean data type
+- Character data type (varchar, char, text)
+- Monetary data type
+- Array
+- Document data type (JSON, XML, Key-value, etc.)
+- Date/Time data type
+- Customization data type (Composite, custom types, etc.)
+
+_Q5. What do you mean by a parallel query?_
+
+Parallel query in PostgreSQL is **an advanced feature**. It allows the arrangement of **query plans** in such a way that they can **exploit multiple CPUs**. This helps in **answering user queries** in a much faster and quicker manner.  
+
+
+_Q6. What is the meaning of PgAdmin?_
+
+PgAdmin is a free open-source **graphical front-end** PostgreSQL database administration tool. This web-based GUI tool is prominently used to manage PostgreSQL databases. It assists in **monitoring and managing numerous complex PostgreSQL** and EDB database systems. PgAdmin is used to accomplish tasks like **accessing**, **developing**, and **carrying out quality testing procedures**.
+
+
+_Q7. Define Write-Ahead logging_
+
+Write-Ahead Logging is a technique used to **ensure the data integrity of PostgreSQL databases**. It helps in maintaining the resilience or the reliability of the database. Write-ahead logging is a method wherein **any changes and actions** in the database are **logged in a transaction log prior** to the updating or modification of the database. In case there is a **database crash**, this feature helps the in **providing the log of the database changes**. In addition, it also helps the user in resuming work from where it was discontinued, after the crash.
+
+_Q8. What is the full form of MVCC?_
+
+The full form of MVCC is Multi-version Concurrency Control.
+
+_Q9. Why do companies use PostgreSQL?_
+
+Numerous high-profile organizations, such as **Apple**, **Spotify**, **IMDb**, **Instagram**, and **Skype**, make use PostgreSQL database, owing to its excellent features:
+
+- PostgreSQL is extremely easy to use.
+- It is a powerful and robust open-source tool.
+- PostgreSQL **follows and supports the ACID properties**.
+- It **supports MVCC**(Multiversion Concurrency Control).
+- It is highly **fault-tolerant**.
+- It **runs on almost all different operating systems**.
+
+_Q10. What is the full form of GEQO?_
+
+The full form of GEQO is **Genetic Query Optimization**. It enables non-exhaustive search to efficiently manage **large join queries** in PostgreSQL.
+
+It is an optional **query optimization technique** used by the PostgreSQL query planner. GEQO **uses genetic algorithms** to explore various query plans and attempt to **find an optimal or near-optimal execution plan for complex queries**.
+
+_Q11. What do you mean by index in PostgreSQL?_
+
+An index in PostgreSQL is a way of increasing the **speed and efficiency** of the database. Databases use indexes as **special lookup tables** that help them **retrieve data in a much quicker manner**. Indexes enable the user to **find specific rows** in a database. They **act like pointers** to the data in the database, thereby **enhancing the overall performance**.
+
+_Q12. What is the main query language of PostgreSQL?_
+
+SQL or Structured Query Language is the main query language of PostgreSQL.
+
+_Q13. What is the full form of ORDBMS?_
+
+The full form of ORDBMS is **Object-Relational Database Management System**.
+
+_Q14. What do you mean by a string constant in PostgreSQL?_
+
+A string constant is defined as the **sequence of characters that are bounded by single quotes** i.e., (‘). It can be **used during insertion or while passing the characters to the database objects**. This is an **important feature** when performing the **parsing of data**. In the case of PostgreSQL, string constant is allowed with single quotes but embedded by a **C-style backslash**.
+
+Example: ‘This is an example of a string constant bound by single quotes.’
+
+**Single Quotes vs. Double Quotes**: PostgreSQL allows string constants to be enclosed within either single quotes or double quotes. Both single and double quotes can be used interchangeably to represent string literals. However, when **using double quotes**, the **string is treated as an identifier** rather than a literal constant.
+
+```sql
+-- Single quotes
+SELECT 'Hello, World!';
+
+-- Double quotes (treated as an identifier)
+SELECT "column_name" FROM table_name;
+
+-- String with escape sequences
+SELECT 'Line 1\nLine 2';
+
+-- Concatenation of string constants
+SELECT 'Hello, ' || 'World!';
+```
+
+_Q15. What is Multi-version Control?_
+
+Multi-version Concurrency Control or MVCC is a technique to enhance database performance by handling concurrency in PostgreSQL databases. It **prevents the locking of databases**. MVCC **reduces the delay time that users face while logging into their accounts** and comes into action when someone else is accessing the contents of the account.
+
+**Inconsistency occurs when numerous transactions attempt to access the same data**. To preserve data consistency, concurrency control is necessary.
+
+Let’s take an example of an ATM machine. **If concurrency is not applied** in this case, **different users won’t be able to access their accounts and draw money at the same time**. Whereas if concurrency control is enabled, then multiple users can do so easily.
+
+
+_Q16. Explain table partitioning in PostgreSQL._
+
+Table Partitioning in PostgreSQL is the **process** wherein a **large table is split into smaller pieces**. These **smaller pieces are known as partitions**. **`List`** and **`range`** partitioning is supported by PostgreSQL through its **table inheritance feature**.
+
+Table partitioning **helps in increasing the query performance** of PostgreSQL, as it is much **easier to select data from partitions rather than selecting from one main table**.
+
+Each partition can store data according to how frequently it is used, allowing **low-use data to be stored on media that may be slower or less expensive**.
+
+_Q17. Explain the use of PostgreSQL triggers._
+
+A trigger can be defined as a **function** that is **called automatically** when the **insertion, updation, or deletion event occurs**. They serve as a way to **check the data integrity**. Triggers are **capable of handling any errors that occur in the database**. Another advantage of triggers is: **Any table** that is present in a PostgreSQL database **can be forced to receive security approvals** with the use of PostgreSQL triggers.
+
+_Q18. Is PostgreSQL compatible with Cloud?_
+
+Yes, PostgreSQL is compatible and be run on Cloud. PostgreSQL is highly portable. Moreover, similar to other open-source databases, PostgreSQL can be effortlessly executed on virtual containers.
+
+_Q20. Name the different types of operators that are used in PostgreSQL._
+
+Operators are the special characters or words that are used mainly in the WHERE clause in PostgreSQL. These operators can be used to perform a variety of functions and operations.
+
+Operators used in PostgreSQL
+
 
 
 [Top 50 PostgreSQL Interview Questions and Answers](https://intellipaat.com/blog/interview-question/postgresql-interview-questions/#postgresql_interview_questions_for_2_to_3_years_of_experience)
