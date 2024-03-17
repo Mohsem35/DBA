@@ -214,15 +214,90 @@ _Q18. Is PostgreSQL compatible with Cloud?_
 
 Yes, PostgreSQL is compatible and be run on Cloud. PostgreSQL is highly portable. Moreover, similar to other open-source databases, PostgreSQL can be effortlessly executed on virtual containers.
 
-_Q20. Name the different types of operators that are used in PostgreSQL._
+_Q19. Name the different types of operators that are used in PostgreSQL._
 
 Operators are the special characters or words that are used mainly in the WHERE clause in PostgreSQL. These operators can be used to perform a variety of functions and operations.
 
 Operators used in PostgreSQL
 
-
-
 [Top 50 PostgreSQL Interview Questions and Answers](https://intellipaat.com/blog/interview-question/postgresql-interview-questions/#postgresql_interview_questions_for_2_to_3_years_of_experience)
+
+_Q20. What do you mean by the CTID field in PostgreSQL?_
+
+
+In PostgreSQL, the `ctid` field is a system column that represents the **physical location of a tuple within its table**. It is a **pseudo-column that exists for every row in a table** and is **automatically maintained by PostgreSQL**. The ctid value consists of two parts: the `1. block number` and the `2.tuple index` within that block.
+
+
+In PostgreSQL, CTIDs serve as **unique identifiers** for each record within a table. The CTID field enables the **precise location of physical rows** based on their **offset and block positions**, facilitating the **effective distribution of data across the table**. By utilizing CTID fields, users can gain insights into the actual storage positions of rows within the database table.
+
+```sql
+SELECT ctid, column1, column2
+FROM table_name
+WHERE column1 = 'some_value';
+```
+
+
+_Q23. State the maximum size of a table on PostgreSQL._
+
+The maximum number of blocks in a table decides the limit of the table. As the number of blocks is 2^32 and 8192 bytes is the default size of the block, therefore, the maximum size of a table on PostgreSQL is **32TB**.
+
+_Q24. What are the differences between PostgreSQL and MongoDB?_
+	
+
+
+PostgreSQL  | MongoDB
+------------- | -------------
+PostgreSQL is a relational database management system  | MongoDB is a non-relational database management system
+PostgreSQL was created using the C language  | MongoDB was created using the C++ language
+PostgreSQL is object-oriented  | MongoDB is document-oriented
+PostgreSQL stores data in the form of different tables | MongoDB stores data in the form of key-value pairs as one record
+PostgreSQL is faster than MongoDB  | MongoDB is relatively slower than PostgreSQL
+
+
+_Q25. State the role of tokens in PostgreSQL._
+
+Tokens in PostgreSQL have an important role in the parsing and interpretation of SQL statements. **When SQL queries are executed**, the PostgreSQL server **breaks down the statements** into smaller units known as **tokens**. These tokens **represent various elements** like `keywords`, `identifiers`, `literals`, `operators`, and `punctuation marks`.  This tokenization process **ensures accurate parsing and evaluation of SQL queries**, enabling the server to handle database operations efficiently.
+
+
+_Q26. When should a developer use PostgreSQL?_
+
+Developers should choose PostgreSQL when they require a **dependable and feature-rich database** management system. PostgreSQL is suitable for diverse applications, including **web development**, **data analysis**, and **enterprise solutions**. It provides advanced features like **1. JSON support** and **2. geospatial capabilities**. With its cross-platform compatibility and active community, developers can rely on PostgreSQL for scaling and achieving optimal performance while managing complex data.
+
+
+_Q27. Describe the history of PostgreSQL in brief._
+
+PostgreSQL originated as a vital component of the **POSTGRES project** initiated by **Professor Michael Stonebraker** in 1986 at the University of California, Berkeley. It boasts compatibility with major operating systems such as macOS, Windows, Linux, and UNIX. 
+
+PostgreSQL has upheld **ACID properties since 2001**, with continuous core platform development spanning over three decades. It encompasses noteworthy additions like the **PostGIS database extender** and has become the standard database for macOS. commonly known as Postgres, due to its widespread adoption of the SQL Standard among relational databases.
+
+_Q28. Explain the procedure to set up PgAdmin in PostgreSQL._
+
+PgAdmin is a web-based management tool that interacts with the PostgreSQL database. It can be used to perform any database administration operations on PostgreSQL.
+
+To set up PgAdmin in PostgreSQL, follow these steps:
+
+- Start and launch pgAdmin 4.
+- Then select “Add new Server” from the “Quick Link” section under the “Dashboard” menu.
+- Choose the “Connection” tab in the “Create-Server” box after clicking “Add new Server” in the window.
+- Put your server’s IP address in the “Hostname/Address” column to configure the connection.
+- Finally, you must define “Port” as “5432,” which is the PostgreSQL server’s default port.
+
+_Q29. Explain the role of table space in PostgreSQL._
+
+Table spaces in PostgreSQL are defined as the **directories where data files can be stored**. They are used to **store various databases as well as database objects**.
+
+Using table spaces, the **disk layout of a PostgreSQL** installation can be easily handled and managed.
+
+In addition to that, tablespaces give administrators the ability to **enhance performance by making use of their knowledge of the usage patterns** of **database objects**.
+
+
+_Q:30. List the disadvantages of PostgreSQL._
+Despite its many advantages, PostgreSQL has numerous disadvantages. Some of these include:
+
+- PostgreSQL may have a slower speed compared to MySQL.
+- It supports fewer open-source applications compared to MySQL.
+- Market recognition for PostgreSQL has been challenging due to its lack of specific ownership.
+- Its performance rate may be lower than that of MySQL in certain situations.
 
 
 [Top 50+ Most Asked PostgreSQL Interview Questions for 2024](https://www.simplilearn.com/postgresql-interview-questions-answers-article)
