@@ -668,9 +668,51 @@ Due to increasing cyberattacks involving malware, phishing, and more, the data a
 
 Vendor Management: Evaluate third-party vendors and service providers for their security practices and adherence to industry standards. Ensure contractual agreements include security requirements, data protection measures, and incident response protocols.
 
-**Incident Response Planning**: Develop and regularly test an incident response plan to effectively respond to security incidents and data breaches. Establish clear escalation procedures, communication protocols, and roles/responsibilities for handling incidents.
+- **Incident Response Planning**: Develop and regularly test an incident response plan to effectively respond to security incidents and data breaches. Establish clear escalation procedures, communication protocols, and roles/responsibilities for handling incidents.
 
-Regulatory Compliance: Stay informed about relevant data protection regulations (e.g., GDPR, CCPA) and industry-specific compliance requirements. Ensure database security measures align with regulatory mandates and standards applicable to your organization.
+- **Regulatory Compliance**: Stay informed about relevant data protection regulations (e.g., GDPR, CCPA) and industry-specific compliance requirements. Ensure database security measures align with regulatory mandates and standards applicable to your organization.
+
+
+
+
+_Q12. What is the first step to deal with a lost database?_
+
+Ans. The first step is to **restore the most recent consistent state** just before the database was lost.
+
+
+_Q13. What is the use of recovery-only database restore?_(MSSQL)
+
+Ans. Recovery-only database restore can be used in two situations when:
+
+1. You were unable to recover the database while restoring the last backup in the restore sequence and you want to recover it to bring it online.
+2. Database is in the standby mode and you want to ensure that the database is updatable without applying other log backup.
+
+
+
+_Q14. What is a clustered index in a database?_
+
+A clustered index in a database determines the **physical order of the data rows in a table based on** the values of one or more **columns**. Unlike non-clustered indexes that create a separate structure, a **clustered index directly sorts and stores the table’s data rows**. Each table can have only one clustered index, and it impacts the way data is stored on disk, affecting the table’s retrieval and storage performance.
+
+In simpler terms, **when you create a clustered index** on a table, the **rows of the table** are **sorted and stored on disk based on the values in the indexed column**(s). This means that the data is physically organized in the same order as the index, providing benefits such as **improved query performance for `range` queries**, as the rows are stored contiguously on disk
+
+_Q15. What is a foreign key constraint in a database?_
+
+
+
+
+A foreign key constraint in a database is a rule that enforces the **referential integrity between two tables**. It establishes a relationship between a column (or set of columns) in one table, known as the foreign key, and the primary key column(s) in another table, known as the referenced key. The **foreign key constraint** ensures that values in the foreign key column(s) of a table must match the values in the referenced key column(s) of the related table or be NULL.
+
+**Behavioral Database Administrator Interview Questions**
+
+Here are some frequently asked behavioural Database administrator interview questions:
+
+Q1. Share what was your role in the most challenging project you worked on.
+
+Q2. How do you learn about new applications?
+
+Q3. Share the time when you implemented a solution that improved data storage.
+
+Q4. How regularly will you carry out tests to ensure data privacy?
 
  - Generated with https://kome.ai
 
