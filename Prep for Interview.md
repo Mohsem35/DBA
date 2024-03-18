@@ -599,6 +599,79 @@ It works best with the Microsoft SQL Server  | It works best with the Oracle Dat
 Easy to understand  | Hard to understand
 Gives a great degree of control to programmers  | Integrates well with SQL
 
+_Q5. Explain the difference between navigational and relational databases._
 
+Ans. In navigational databases, **data is organized primarily through physical pointers or links**. Records are connected to each other through these pointers, forming a hierarchical or network structure. They are mostly used for **applications that need rapid data access**.
+
+- Navigational databases typically follow **hierarchical** or **network data models**.
+- In a hierarchical model, data is organized in a **tree-like structure** with parent-child relationships.
+- In a network model, data is organized in a more complex **graph-like structure** where records can have multiple connections to other records.
+- More **rigid** in terms of data organization
+
+In relational databases, **data is organized into tables consisting of rows and columns**. Each table represents an entity or a relationship, and the relationships between tables are established **through keys**. 
+
+-  It emphasizes the concept of relational operations (e.g., join, select) for querying and manipulating data.
+-  more flexibility in data modeling and querying
+
+Overall, while navigational databases were **historically popular in early database systems**, relational databases have become dominant due to their flexibility, simplicity, and adherence to standard querying languages like SQL. Relational databases are widely used in various industries and applications, ranging from small-scale business systems to large enterprise databases.
+
+_Q6. Explain DBCC_
+
+Ans. DBCC refers to **Microsoft SQL Server Database `Console` Commands**. The DBCC statements are used for performing a variety of tasks, such as ensuring the integrity of a database, performing maintenance operations on databases, and gathering and displaying information.
+
+Maintenance commands: for performing maintenance activities on a database, index, or filegroup.
+Informational commands: for collecting and displaying information.
+Validation commands: for validating the database.
+Miscellaneous commands: for miscellaneous tasks such as removing a DDL from memory.
+
+_Q7. What is a Join clause?_
+
+Ans. Join is a clause in SQL that helps to simultaneously search across multiple tables. Join helps in **combining one or more than one table into a new table**. There are different types of Join including (INNER) JOIN, LEFT (OUTER) JOIN, RIGHT (OUTER) JOIN and FULL (OUTER) JOIN.
+
+_Q10. What process would you follow to troubleshoot database problems?_
+
+Ans. Database administrators are expected to perform the troubleshooting task regularly and efficiently. To answer this question, you will need to share a well-defined process that you follow. You can share in detail your previous experience of how often you performed the troubleshooting task, what the process is like, and what resources and tools you used for troubleshooting.
+
+Example: Here’s a basic process to troubleshooting SQL server problems
+
+- **Gather facts and information**
+- Test in a variety of environments and machines
+- **Review the SQL Server error log**
+- Review the event log
+- Review the default trace
+- **Review the change log**
+- Develop a plan for testing
+- **Backup database**
+- Additional testing and logging
+
+_Q11. What steps would you take to protect the company’s databases from external threats?_
+
+Ans. This question will be asked to assess your knowledge and experience in safeguarding a company’s databases from **cyberattacks and threats**.
+
+Due to increasing cyberattacks involving malware, phishing, and more, the data and assets of corporations, governments and individuals are at constant risk. Regardless of how big the business is, every company must protect its databases from any type of threat. Some of the common strategies to safeguard databases from external threats include:
+
+- **Implement Access Controls**: Restrict database access to authorized users only. Use role-based access control (RBAC) to manage user privileges effectively. Ensure strong password policies and consider implementing multi-factor authentication (MFA) for added security.
+
+- **Encrypt Data**: Utilize encryption techniques to protect data at rest and in transit. Implement encryption mechanisms such as Transparent Data Encryption (TDE) for data stored on disk, and Transport Layer Security (TLS) for encrypting data during transmission over networks.
+
+- **Patch Management**: Regularly update and patch database management systems (DBMS), operating systems, and software components to address known vulnerabilities. Vulnerability assessment tools can help identify and prioritize patching efforts.
+
+- **Network Security**: Segment databases onto separate network segments or VLANs to minimize the attack surface. Implement **network firewalls**, intrusion detection/prevention systems (IDS/IPS), and virtual private networks (**VPNs**) to monitor and control traffic to and from database servers.
+
+- **Database Activity Monitoring**: Deploy real-time monitoring solutions to track and analyze database activities for suspicious behavior or unauthorized access attempts. Intrusion detection systems (IDS) and database audit logs can help detect and respond to security incidents promptly.
+
+- **Backup and Recovery**: Establish regular backup procedures to ensure data integrity and availability in the event of a security breach, data corruption, or system failure. Implement off-site backups and test the restoration process regularly to verify data recoverability.
+
+- **Database Auditing and Logging**: Enable auditing features within the DBMS to record database transactions, schema changes, and user activities. Maintain comprehensive logs of database events for forensic analysis, compliance, and incident response purposes.
+
+- **Security Awareness Training**: Educate employees on security best practices, including phishing awareness, password hygiene, and social engineering tactics. Foster a culture of security awareness and accountability across the organization.
+
+Vendor Management: Evaluate third-party vendors and service providers for their security practices and adherence to industry standards. Ensure contractual agreements include security requirements, data protection measures, and incident response protocols.
+
+**Incident Response Planning**: Develop and regularly test an incident response plan to effectively respond to security incidents and data breaches. Establish clear escalation procedures, communication protocols, and roles/responsibilities for handling incidents.
+
+Regulatory Compliance: Stay informed about relevant data protection regulations (e.g., GDPR, CCPA) and industry-specific compliance requirements. Ensure database security measures align with regulatory mandates and standards applicable to your organization.
 
  - Generated with https://kome.ai
+
+[100+ SQL Interview Questions and Answers for 2023](https://www.shiksha.com/online-courses/articles/top-sql-interview-questions-and-answers/)
