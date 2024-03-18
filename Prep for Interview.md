@@ -556,5 +556,49 @@ The main objective of the **`pg_archivecleanup`** tool in PostgreSQL is to **get
 
 [Top Database Administrator (DBA) Interview Questions for 2023](https://www.shiksha.com/online-courses/articles/database-administrator-dba-interview-questions/)
 
+_Q1. What is SQL? Name the most common SQL queries._
+
+Ans. SQL stands for Structured Query Language. It is a popular programming language used for accessing and modifying data in databases. We can use SQL to insert, search, update, and delete records in a database.
+
+
+_Q2. Explain ODBC._
+
+Ans. ODBC is short for Open Database Connectivity. It is an open standard API (Application Programming Interface) that helps in accessing a database. It is independent of platforms and operating systems. ODBC statements in a program enable users to access files in many different common databases. While working with the ODBC software, a separate module or driver is required for each database to be accessed.
+
+The architecture of ODBC-based data connectivity consists of the following components:
+
+ODBC Enabled Application
+ODBC Driver Manager
+ODBC Driver
+Data Source
+
+_Q3. Explain SQLOS._
+
+Ans. The SQLOS is a **different application layer at the lowest level** of the SQL Server Database Engine. It is the server application that **manages the operating system resources**. The SQL Server and SQL Reporting Services 
+both run over it.
+
+The main functions of the SQLOS include:
+
+- **Scheduling**
+- Synchronization
+- Asynchronous IO
+- **Memory management**
+- **Deadlock detection and management**
+- SQL server **exception handling**
+- Hosting services for external components
+
+
+_Q4. What is the difference between T-SQL and PL/SQL?_
+
+Ans. T-SQL stands for **Transact-SQL** and is the **extension of Structured Query Language** that is used in **Microsoft**. PL SQL is short for **Procedural Language Structural Query Language**. It is the extension of Structured Query Language that is used in **Oracle**. Below are the differences between T-SQL and PL/SQL.
+
+T-SQL  | PL/SQL
+------------- | -------------
+The full form of T-SQL is Transact Structured Query Language  | PL SQL stands for Procedural Language Structural Query Language
+It works best with the Microsoft SQL Server  | It works best with the Oracle Database Server
+Easy to understand  | Hard to understand
+Gives a great degree of control to programmers  | Integrates well with SQL
+
+
 
  - Generated with https://kome.ai
