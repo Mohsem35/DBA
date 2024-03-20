@@ -172,6 +172,8 @@ WHERE EXISTS
 
 _Q20. Write a query to retrieve two minimum and maximum salaries from the EmployeePosition table._
 
+**lowest হইলে E1 বড় হবে, highest হইলে E2 বড় হবে** 
+
 ```sql
 SELECT DISTINCT Salary                      -- distinct salaries from E1
 FROM EmployeePosition E1 
@@ -259,3 +261,105 @@ Filter rows where the count of distinct salaries greater than or equal to the cu
 |--------|
 | 75000  |
 | 80000  |
+
+_Q21. Write a query to find the Nth highest salary from the table without using TOP/limit keyword._
+
+**lowest হইলে E1 বড় হবে, highest হইলে E2 বড় হবে** 
+
+```sql
+SELECT Salary 
+FROM EmployeePosition E1 
+WHERE N-1 = (
+      -- subquery that calculates the count of distinct salaries greater than the salary of the current row (E1.Salary)
+      SELECT COUNT( DISTINCT ( E2.Salary ) ) 
+      FROM EmployeePosition E2 
+      WHERE E2.Salary > E1.Salary 
+);
+```
+
+_Q22. Write a query to retrieve duplicate records from a table._
+
+
+To **retrieve duplicate records** from a table, you can use the SQL **`GROUP BY`** and **`HAVING`** clauses to identify records where there are more than one occurrence
+
+```sql
+SELECT EmpID, EmpFname, Department, COUNT(*)
+FROM EmployeeInfo
+GROUP BY EmpID, EmpFname, Department
+HAVING COUNT(*) > 1;
+```
+
+_Q23. Write a query to retrieve the list of employees working in the same department._
+
+```sql
+SELECT E1.EmpFname, E1.EmpLname, 
+       E2.EmpFname, E2.EmpLname
+FROM EmployeeInfo E1
+INNER JOIN EmployeeInfo E2 ON E1.Department = E2.Department
+WHERE E1.EmpID <> E2.EmpID;
+```
+
+
+_Q24. Write a query to retrieve the last 3 records from the EmployeeInfo table._
+
+```sql
+SELECT * FROM EmployeeInfo
+ORDER BY EmpID DESC
+LIMIT 3;
+```
+
+
+
+_Q25. Write a query to find the third-highest salary from the EmpPosition table._
+
+```sql
+SELECT * FROM EmployeePosition
+ORDER BY salary DESC
+LIMIT 1 OFFSET 2;
+```
+
+
+_Q26. Write a query to display the first and the last record from the EmployeeInfo table._
+
+```sql
+SELECT * 
+FROM EmployeeInfo 
+WHERE EmpID = (SELECT MIN(EmpID) FROM EmployeeInfo)
+OR EmpID = (SELECT MAX(EmpID) FROM EmployeeInfo);
+```
+
+_Q27. Write a query to add email validation to your database_
+
+
+In PostgreSQL, you can use the `SIMILAR TO` operator or the `~` operator with the `!~` negation to perform regular expression matching.
+
+```sql
+SELECT Email 
+FROM EmployeeInfo 
+WHERE Email !~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$';
+```
+
+
+_Q28. Write a query to retrieve Departments who have less than 2 employees working in it._
+
+```sql
+SELECT Department FROM EmployeeInfo
+GROUP BY Department
+HAVING COUNT(*) < 2;
+```
+
+_Q29. Write a query to retrieve EmpPostion along with total salaries paid for each of them._
+
+```sql
+SELECT EmpPosition, SUM(Salary) AS TotalSalary
+FROM EmployeePosition
+GROUP BY EmpPosition;
+```
+
+_Q30. Write a query to fetch 50% records from the EmployeeInfo table._
+
+```sql  
+SELECT *
+FROM EmployeeInfo
+LIMIT (SELECT COUNT(*) * 0.5 FROM EmployeeInfo);
+```
