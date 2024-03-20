@@ -1,4 +1,7 @@
 
+### Edureka SQL interview questions
+
+
 _EmployeeInfo Table:_
 
 
@@ -362,4 +365,393 @@ _Q30. Write a query to fetch 50% records from the EmployeeInfo table._
 SELECT *
 FROM EmployeeInfo
 LIMIT (SELECT COUNT(*) * 0.5 FROM EmployeeInfo);
+```
+
+
+
+
+### Shiksha 100+ SQL Interview Questions and Answers for 2023
+
+[Shiksha 100+ SQL Interview Questions and Answers for 2023](https://www.shiksha.com/online-courses/articles/top-sql-interview-questions-and-answers/)
+
+_1. Use the GROUP BY clause to **count the number of employees in each department**.mployee table._
+
+```sql
+SELECT department, COUNT(EmployeeID) AS num_employee
+FROM employee
+GROUP BY department;
+```
+
+> Note: We should use double quotes or no quotes at all for column aliases in PostgreSQL
+
+_2. Using HAVING clause determine the **department having number of employees greater than 1**._
+
+```sql
+SELECT department, COUNT(EmployeeID) AS num_employee
+FROM employee
+GROUP BY department
+HAVING COUNT(EmployeeID) > 1;
+```
+
+#### Leet Code SQL Practice Problem
+
+_3. Write a solution to find the customer_number for the **customer who has placed the largest number of orders**._
+
+Orders Table:
+
+
+| order_number | customer_number |
+| -------------|-----------------|
+| 1            | 1               |
+| 2            | 2               |
+| 3            | 3               |
+| 4            | 3               |
+
+
+
+```SQL
+SELECT customer_number 
+FROM Orders 
+GROUP BY customer_number 
+ORDER BY COUNT(customer_number) DESC 
+LIMIT 1;
+```
+
+_Question-2: Report for every three-line segments whether they can form a triangle. Return the result table in any order._
+
+Triangle table
+
+| Column Name | Type |
+|-------------|------|
+| x           | int  |
+| y           | int  |
+| z           | int  |
+
+
+```sql
+SELECT x,y,z
+  CASE
+    WHEN (x+y) > z AND (y+z) x AND (x+z) > y 
+    THEN 'Yes'
+    ELSE 'No'
+  END AS triangle
+FROM triangle;
+```
+
+_Question-3: Write a solution to find the names of all the salespersons who did not have any orders related to the company with the name “RED”. Return the result table in any order._
+
+
+SalesPerson table:
+
+| sales_id | name | salary | commission_rate | hire_date  |
+|----------|------|--------|-----------------|------------|
+| 1        | John | 100000 | 6               | 4/1/2006   |
+| 2        | Amy  | 12000  | 5               | 5/1/2010   |
+| 3        | Mark | 65000  | 12              | 12/25/2008 |
+| 4        | Pam  | 25000  | 25              | 1/1/2005   |
+| 5        | Alex | 5000   | 10              | 2/3/2007   |
+
+Company table:
+
+| com_id | name   | city     |
+|--------|--------|----------|
+| 1      | RED    | Boston   |
+| 2      | ORANGE | New York |
+| 3      | YELLOW | Boston   |
+| 4      | GREEN  | Austin   |
+
+Orders table:
+
+| order_id | order_date | com_id | sales_id | amount |
+|----------|------------|--------|----------|--------|
+| 1        | 1/1/2014   | 3      | 4        | 10000  |
+| 2        | 2/1/2014   | 4      | 5        | 5000   |
+| 3        | 3/1/2014   | 1      | 1        | 50000  |
+| 4        | 4/1/2014   | 1      | 4        | 25000  |
+
+Output: 
+
+| name |
+|------|
+| Amy  |
+| Mark |
+| Alex |
+
+
+```sql
+SELECT salesperson.name
+FROM salesperson
+LEFT JOIN orders ON salesperson.sales_id = orders.sales_id
+LEFT JOIN company ON orders.com_id = company.com_id
+WHERE company.name = 'RED'
+GROUP BY salesperson.name
+HAVING SUM(amount) IS NULL;
+```
+
+
+Question-4: **Actors and Directors Who Cooperated At Least Three Times** 
+
+_Write a solution to find all the pairs (actor_id, director_id) where the actor has cooperated with the director at least three times. Return the result table in any order._
+
+ActorDirector table:
+
+| actor_id    | director_id | timestamp   |
+|-------------|-------------|-------------|
+| 1           | 1           | 0           |
+| 1           | 1           | 1           |
+| 1           | 1           | 2           |
+| 1           | 2           | 3           |
+| 1           | 2           | 4           |
+| 2           | 1           | 5           |
+| 2           | 1           | 6           |
+
+
+
+| actor_id    | director_id |
+|-------------|-------------|
+| 1           | 1           |
+
+
+- **`HAVING` keyword use করতে গেল `GROUP BY` keyword must use করতে হবে** 
+
+```sql
+SELECT actor_id, director_id
+FROM ActorDirector
+GROUP BY actor_id, director_id
+HAVING COUNT(timestamp) >= 3;
+```
+
+**Question-5: Product Sales Analysis**
+
+_Write a solution to report the product_name, year, and price for each sale_id in the Sales table. Return the resulting table in any order._
+
+Sales table:
+
+| sale_id | product_id | year | quantity | price |
+|---------|------------|------|----------|-------| 
+| 1       | 100        | 2008 | 10       | 5000  |
+| 2       | 100        | 2009 | 12       | 5000  |
+| 7       | 200        | 2011 | 15       | 9000  |
+
+Product table:
+
+| product_id | product_name |
+|------------|--------------|
+| 100        | Nokia        |
+| 200        | Apple        |
+| 300        | Samsung      |
+
+
+Output: 
+
+| product_name | year  | price |
+|--------------|-------|-------|
+| Nokia        | 2008  | 5000  |
+| Nokia        | 2009  | 5000  |
+| Apple        | 2011  | 9000  |
+
+
+```sql
+SELECT p.product_name, s.year, s.price
+FROM sales s
+LEFT JOIN product p ON s.product_id = p.product_id;
+```
+
+
+**Question-6: Project Employees**
+
+_Write an SQL query that reports the average experience years of all the employees for each project, rounded to 2 digits. Return the result table in any order._
+
+
+Project table:
+
+| project_id  | employee_id |
+|-------------|-------------|
+| 1           | 1           |
+| 1           | 2           |
+| 1           | 3           |
+| 2           | 1           |
+| 2           | 4           |
+
+
+Employee table:
+
+| employee_id | name   | experience_years |
+|-------------|--------|------------------|
+| 1           | Khaled | 3                |
+| 2           | Ali    | 2                |
+| 3           | John   | 1                |
+| 4           | Doe    | 2                |
+
+Output: 
+
+| project_id  | average_years |
+|-------------|---------------|
+| 1           | 2.00          |
+| 2           | 2.50          |
+
+
+```sql
+SELECT p.project_id, ROUND(AVG(experience_years), 2) AS average_experience_years
+FROM project p
+JOIN employee ON p.employee_id = e.employee_id
+GROUP BY project_id;
+
+
+
+-- avg()function use করতে না চাইলে sum() and count() fucntion use করতে হবে 
+select project_id,
+round(sum(e.experience_years) / count(e.experience_years),2) as average_years
+from project p
+join employee e on p.employee_id = e.employee_id
+group by project_id
+```
+
+
+**Question-7: Game Play Analysis**
+
+_Write a solution to find the first login date for each player. Return the result table in any order._
+
+Activity table:
+
+| player_id | device_id | event_date | games_played |
+|-----------|-----------|------------|--------------|
+| 1         | 2         | 2016-03-01 | 5            |
+| 1         | 2         | 2016-05-02 | 6            |
+| 2         | 3         | 2017-06-25 | 1            |
+| 3         | 1         | 2016-03-02 | 0            |
+| 3         | 4         | 2018-07-03 | 5            |
+
+
+Output: 
+
+| player_id | first_login |
+|-----------|-------------|
+| 1         | 2016-03-01  |
+| 2         | 2017-06-25  |
+| 3         | 2016-03-02  |
+
+
+```sql
+SELECT player_id, MIN(event_date) AS first_login
+FROM activity
+GROUP BY player_id;
+```
+
+
+**Ques-8: User Activity Past 30 Days**
+
+_Write a solution to find the daily active user count for a period of 30 days ending 2019-07-27 inclusively. A user was active on someday if they made at least one activity on that day. Return the result table in any order._
+
+- 2019 সালের ২৭ জুলাই থেকে তার আগের ৩০ দিন অর্থাৎ জুন মাসের ২৭ তারিখ পর্যন্ত activity count করে query লিখতে হবে (june 27 - july 27). তার আগের activity count হবে না 
+
+Activity table:
+
+| user_id | session_id | activity_date | activity_type |
+|---------|------------|---------------|---------------|
+| 1       | 1          | 2019-07-20    | open_session  |
+| 1       | 1          | 2019-07-20    | scroll_down   |
+| 1       | 1          | 2019-07-20    | end_session   |
+| 2       | 4          | 2019-07-20    | open_session  |
+| 2       | 4          | 2019-07-21    | send_message  |
+| 2       | 4          | 2019-07-21    | end_session   |
+| 3       | 2          | 2019-07-21    | open_session  |
+| 3       | 2          | 2019-07-21    | send_message  |
+| 3       | 2          | 2019-07-21    | end_session   |
+| 4       | 3          | 2019-06-25    | open_session  |
+| 4       | 3          | 2019-06-25    | end_session   |
+
+
+Output: 
+
+| day        | active_users |
+|------------|--------------| 
+| 2019-07-20 | 2            |
+| 2019-07-21 | 2            |
+ 
+
+ ```sql
+ SELECT activity_date AS day, COUNT( DISTINCT user_id) AS active_users
+ FROM activity
+ WHERE (activity_date > '2019-06-27' AND activity_date <= '2019-07-27')
+ GROUP BY activity_date;
+ ```
+
+
+**Question-9: Article View**
+
+_Write a solution to find all the authors who viewed at least one of their own articles. Return the result table sorted by id in ascending order._
+
+
+Views table:
+
+| article_id | author_id | viewer_id | view_date  |
+|------------|-----------|-----------|------------|
+| 1          | 3         | 5         | 2019-08-01 |
+| 1          | 3         | 6         | 2019-08-02 |
+| 2          | 7         | 7         | 2019-08-01 |
+| 2          | 7         | 6         | 2019-08-02 |
+| 4          | 7         | 1         | 2019-07-22 |
+| 3          | 4         | 4         | 2019-07-21 |
+| 3          | 4         | 4         | 2019-07-21 |
+
+
+Output: 
+
+| id   |
+|------|
+| 4    |
+| 7    |
+ 
+
+```sql
+SELECT DISTINCT(author_id) AS id
+FROM views
+WHERE author_id = viewer_id
+order by id;
+```
+
+
+**Question-10: Average Selling Price**
+
+_Write an SQL query to find the average selling price for each product. average_price should be rounded to 2 decimal places. Return the result table in any order._
+
+Prices table:
+
+| product_id | start_date | end_date   | price  |
+|------------|------------|------------|--------|
+| 1          | 2019-02-17 | 2019-02-28 | 5      |
+| 1          | 2019-03-01 | 2019-03-22 | 20     |
+| 2          | 2019-02-01 | 2019-02-20 | 15     |
+| 2          | 2019-02-21 | 2019-03-31 | 30     |
+
+UnitsSold table:
+
+| product_id | purchase_date | units |
+|------------|---------------|-------|
+| 1          | 2019-02-25    | 100   |
+| 1          | 2019-03-01    | 15    |
+| 2          | 2019-02-10    | 200   |
+| 2          | 2019-03-22    | 30    |
+
+Output: 
+
+| product_id | average_price |
+|------------|---------------|
+| 1          | 6.96          |
+| 2          | 16.96         |
+
+
+Average selling price = Total Price of Product / Number of products sold.
+
+1. Average selling price for product 1 = ((100 * 5) + (15 * 20)) / 115 = 6.96
+2. Average selling price for product 2 = ((200 * 15) + (30 * 30)) / 230 = 16.96
+
+```sql
+SELECT U.product_id, ROUND(SUM(P.price * U.units) / SUM(U.units),2) AS average_price
+FROM prices P
+JOIN unitssold U ON 1=1 
+AND P.product_id = U.product_id 
+AND U.purchase_date BETWEEN P.start_date AND P.end_date
+GROUP BY U.product_id;
 ```
