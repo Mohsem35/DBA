@@ -755,3 +755,193 @@ AND P.product_id = U.product_id
 AND U.purchase_date BETWEEN P.start_date AND P.end_date
 GROUP BY U.product_id;
 ```
+
+
+**Question-11: Students and Examination**
+
+Write a sql query solution to find the number of times each student attended each exam. Return the result table ordered by student_id and subject_name.
+
+
+Students table:
+
+| student_id | student_name |
+|------------|--------------|
+| 1          | Alice        |
+| 2          | Bob          |
+| 13         | John         |
+| 6          | Alex         |
+
+Subjects table:
+
+| subject_name |
+|--------------|
+| Math         |
+| Physics      |
+| Programming  |
+
+Examinations table:
+
+| student_id | subject_name |
+|------------|--------------|
+| 1          | Math         |
+| 1          | Physics      |
+| 1          | Programming  |
+| 2          | Programming  |
+| 1          | Physics      |
+| 1          | Math         |
+| 13         | Math         |
+| 13         | Programming  |
+| 13         | Physics      |
+| 2          | Math         |
+| 1          | Math         |
+
+
+
+Output: 
+
+| student_id | student_name | subject_name | attended_exams |
+|------------|--------------|--------------|----------------|
+| 1          | Alice        | Math         | 3              |
+| 1          | Alice        | Physics      | 2              |
+| 1          | Alice        | Programming  | 1              |
+| 2          | Bob          | Math         | 1              |
+| 2          | Bob          | Physics      | 0              |
+| 2          | Bob          | Programming  | 1              |
+| 6          | Alex         | Math         | 0              |
+| 6          | Alex         | Physics      | 0              |
+| 6          | Alex         | Programming  | 0              |
+| 13         | John         | Math         | 1              |
+| 13         | John         | Physics      | 1              |
+| 13         | John         | Programming  | 1              |
+
+
+```sql
+SELECT S.student_id, S.student_name, SUB.subject_name, COUNT(E.subject_name) AS attended_exams
+FROM students S
+LEFT JOIN examinations E ON S.student_id = E.student_id
+CROSS JOIN subjects SUB         -- Cartesian product of the S and SUB table
+GROUP BY  S.student_id,  S.student_name, SUB.subject_name
+ORDER BY S.student_id, SUB.subject_name;
+```
+
+**Question-12: Replace Employee ID With The Unique Identifier**
+
+_Write a solution to show the unique ID of each user, If a user does not have a unique ID replace just show null. Return the result table in any order._
+
+Employees table:
+
+| id | name     |
+|----|----------|
+| 1  | Alice    |
+| 7  | Bob      |
+| 11 | Meir     |
+| 90 | Winston  |
+| 3  | Jonathan |
+
+EmployeeUNI table:
+
+| id | unique_id |
+|----|-----------|
+| 3  | 1         |
+| 11 | 2         |
+| 90 | 3         |
+
+Output: 
+
+| unique_id | name     |
+|-----------|----------|
+| null      | Alice    |
+| null      | Bob      |
+| 2         | Meir     |
+| 3         | Winston  |
+| 1         | Jonathan |
+
+```sql
+SELECT E.name, EU.unique_id AS unique_id
+FROM Employees E
+LEFT JOIN EmployeeUNI EU ON E.id = EU.id;
+```
+
+
+**Question-13: Top Travellers**
+
+_Write a solution to report the distance traveled by each user. Return the result table ordered by travelled_distance in descending order, if two or more users traveled the same distance, order them by their name in ascending order._
+
+Users table:
+
+| id   | name      |
+|------|-----------|
+| 1    | Alice     |
+| 2    | Bob       |
+| 3    | Alex      |
+| 4    | Donald    |
+| 7    | Lee       |
+| 13   | Jonathan  |
+| 19   | Elvis     |
+
+Rides table:
+
+| id   | user_id  | distance |
+|------|----------|----------|
+| 1    | 1        | 120      |
+| 2    | 2        | 317      |
+| 3    | 3        | 222      |
+| 4    | 7        | 100      |
+| 5    | 13       | 312      |
+| 6    | 19       | 50       |
+| 7    | 7        | 120      |
+| 8    | 19       | 400      |
+| 9    | 7        | 230      |
+
+
+Output: 
+
+| name     | travelled_distance |
+|----------|--------------------|
+| Elvis    | 450                |
+| Lee      | 450                |
+| Bob      | 317                |
+| Jonathan | 312                |
+| Alex     | 222                |
+| Alice    | 120                |
+| Donald   | 0                  |
+
+
+
+```sql
+SELECT U.name, 
+    IFNULL(SUM(R.distance), 0) AS travelled_distance
+FROM users U 
+LEFT JOIN rides R ON U.id = R.user_id
+GROUP BY U.id, U.name
+ORDER BY travelled_distance DESC, U.NAME ASC;
+```
+
+**Question-14: Group Sold Product By Date**
+
+_Write a solution to find for each date the number of different products sold and their names. The sold product names for each date should be sorted lexicographically. Return the result table ordered by sell_date._
+
+Activities table:
+
+| sell_date  | product    |
+|------------|------------|
+| 2020-05-30 | Headphone  |
+| 2020-06-01 | Pencil     |
+| 2020-06-02 | Mask       |
+| 2020-05-30 | Basketball |
+| 2020-06-01 | Bible      |
+| 2020-06-02 | Mask       |
+| 2020-05-30 | T-Shirt    |
+
+Output: 
+
+| sell_date  | num_sold | products                     |
+|------------|----------|------------------------------|
+| 2020-05-30 | 3        | Basketball,Headphone,T-shirt |
+| 2020-06-01 | 2        | Bible,Pencil                 |
+| 2020-06-02 | 1        | Mask                         |
+
+
+```sql
+SELECT DISTINCT(sell_date), COUNT(DISTINCT(product)) AS num_sold, 
+```
