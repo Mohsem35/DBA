@@ -943,5 +943,106 @@ Output:
 
 
 ```sql
-SELECT DISTINCT(sell_date), COUNT(DISTINCT(product)) AS num_sold, 
+SELECT DISTINCT(sell_date), COUNT(DISTINCT(product)) AS num_sold
+  GROUP_CONCAT(DISTINCT product ORDER BY product ASC SEPERATOR ',') AS products
+FROM activities
+GROUP BY sell_date
+ORDER BY sell_date DESC;
 ```
+
+**Question-15: Find users with valid E-mail**
+
+Write a solution to find the users who have valid emails.
+
+A valid e-mail has a prefix name and a domain where:
+
+- **The prefix name** is a string that may contain letters (upper or lower case), digits, underscore ‘_’, period ‘.’, and/or dash ‘-‘. The prefix name **must** start with a letter.
+- **The domain** is ‘@leetcode.com’.
+
+Users table:
+
+| user_id | name      | mail                    |
+|---------|-----------|-------------------------|
+| 1       | Winston   | winston@leetcode.com    |
+| 2       | Jonathan  | jonathanisgreat         |
+| 3       | Annabelle | bella-@leetcode.com     |
+| 4       | Sally     | sally.come@leetcode.com |
+| 5       | Marwan    | quarz#2020@leetcode.com |
+| 6       | David     | david69@gmail.com       |
+| 7       | Shapiro   | .shapo@leetcode.com     |
+
+Output: 
+
+| user_id | name      | mail                    |
+|---------|-----------|-------------------------|
+| 1       | Winston   | winston@leetcode.com    |
+| 3       | Annabelle | bella-@leetcode.com     |
+| 4       | Sally     | sally.come@leetcode.com |
+
+
+```sql
+SELECT * FROM users
+WHERE mail REGEXP '^[a-zA-Z][a-zA-Z0-9_.-]*@leetcode[.]com$';
+```
+
+
+#### Medium
+**Question-1: Manager with at least 5 Direct Reports**
+
+Write a solution to find managers with at least five direct reports. Return the result table in any order.
+
+Employee table:
+
+| id  | name  | department | managerId |
+|-----|-------|------------|-----------|
+| 101 | John  | A          | None      |
+| 102 | Dan   | A          | 101       |
+| 103 | James | A          | 101       |
+| 104 | Amy   | A          | 101       |
+| 105 | Anne  | A          | 101       |
+| 106 | Ron   | B          | 101       |
+
+
+Output: 
+| name |
+|------|
+| John |
+
+```sql
+SELECT name 
+FROM employee AS e 
+INNER JOIN employee AS m ON e.managerId = m.Id
+GROUP BY e.managerId
+HAVING COUNT (e.id) >= 5;
+```
+
+**Question-2: Tree Node**
+
+Each node in the tree can be one of three types:
+
+- “Leaf”: if the node is a leaf node.
+- “Root”: if the node is the root of the tree.
+- “Inner”: If the node is neither a leaf node nor a root node.
+
+Write a solution to report the type of each node in the tree.
+
+Input: 
+Tree table:
+
+| id | p_id |
+|----|------|
+| 1  | null |
+| 2  | 1    |
+| 3  | 1    |
+| 4  | 2    |
+| 5  | 2    |
+
+Output: 
+
+| id | type  |
+|----|-------|
+| 1  | Root  |
+| 2  | Inner |
+| 3  | Leaf  |
+| 4  | Leaf  |
+| 5  | Leaf  |
