@@ -1049,3 +1049,125 @@ Output:
 | 3  | Leaf  |
 | 4  | Leaf  |
 | 5  | Leaf  |
+
+Explanation to Example: 
+
+- Node 1 is the root node because its parent node is null, and it has child nodes 2 and 3.
+- Node 2 is an inner node because it has parent node 1 and child nodes 4 and 5.
+- Nodes 3, 4, and 5 are leaf nodes because they have parent nodes, and they do not have child nodes.
+
+```sql
+SELECT DISTINCT t1.id, (
+  CASE 
+    WHEN t1.p_id IS NULL THEN 'Root'
+    WHEN t1.p_id IS NOT NULL AND t2.p_id IS NOT NULL THEN 'Inner'
+    WHEN t1.p_id IS NOT NULL AND t2.p_id IS NULL THEN 'Leaf'  
+  END
+) AS Type
+FROM tree t1
+LEFT JOIN tree t2
+ON t1.p_id = t2.p_id;
+```
+
+**Question-3: Customer Who Bought All Product**
+
+Write a solution to report the customer ids from the Customer table that bought all the products in the Product table. Return the result table in any order.
+
+
+Customer table:
+
+| customer_id | product_key |
+|-------------|-------------|
+| 1           | 5           |
+| 2           | 6           |
+| 3           | 5           |
+| 3           | 6           |
+| 1           | 6           |
+
+Product table:
+| product_key |
+|-------------|
+| 5           |
+| 6           |
+
+Output: 
+
+| customer_id |
+|-------------|
+| 1           |
+| 3           |
+
+
+```sql
+SELECT customer_id FROM customer
+GROUP BY customer_id
+HAVING COUNT (DISTINCT product_key) = (SELECT COUNT (DISTINCT product_key) 
+                                        FROM product);
+```
+**Question-4: Game Play Analysis**
+
+Write a solution to report the fraction of players that logged in again on the day after the day they first logged in, rounded to 2 decimal places. In other words, you need to count the number of players that logged in for at least two consecutive days starting from their first login date, then divide that number by the total number of players.
+
+
+Activity table:
+
+| player_id | device_id | event_date | games_played |
+|-----------|-----------|------------|--------------|
+| 1         | 2         | 2016-03-01 | 5            |
+| 1         | 2         | 2016-03-02 | 6            |
+| 2         | 3         | 2017-06-25 | 1            |
+| 3         | 1         | 2016-03-02 | 0            |
+| 3         | 4         | 2018-07-03 | 5            |
+
+Output: 
+
+| fraction  |
+|-----------|
+| 0.33      |
+
+
+Total player হচ্ছে ৩ জন, শুধুমাত্র 1 no player login করার ঠিক পরের দিন আবার ঢুকে game play করে। তাহলে result হচ্ছে 1/3 = 0.33
+
+```sql
+WITH Firstlogins AS (
+  SELECT player_id, MIN(event_date) AS first_login
+  FROM Activity
+  GROUP BY player_id
+),
+
+ConsecutiveLogins AS (
+  SELECT f1.player_id
+  FROM Firstlogins f1
+  INNER JOIN Activity act ON f1.player_id = act.player_id
+  -- main line 
+  WHERE act.event_date = DATE_ADD(f1.first_login, INTERVAL 1 DAY)
+)
+
+SELECT CAST (COUNT(*) AS FLOAT) / COUNT(DISTINCT player_id) AS fraction
+FROM ConsecutiveLogins;
+```
+
+
+**Question-5: Product Price At a Given Date**
+
+Write an SQL query to find the prices of all products on 2019-08-16. Assume the price of all products before any change is 10. Return the result table in any order
+
+
+Products table:
+
+| product_id | new_price | change_date |
+|------------|-----------|-------------|
+| 1          | 20        | 2019-08-14  |
+| 2          | 50        | 2019-08-14  |
+| 1          | 30        | 2019-08-15  |
+| 1          | 35        | 2019-08-16  |
+| 2          | 65        | 2019-08-17  |
+| 3          | 20        | 2019-08-18  |
+
+Output: 
+
+| product_id | price |
+|------------|-------|
+| 2          | 50    |
+| 1          | 35    |
+| 3          | 10    |
