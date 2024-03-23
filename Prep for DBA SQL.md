@@ -1016,6 +1016,7 @@ GROUP BY e.managerId
 HAVING COUNT (e.id) >= 5;
 ```
 
+
 **Question-2: Tree Node**
 
 Each node in the tree can be one of three types:
@@ -1025,6 +1026,8 @@ Each node in the tree can be one of three types:
 - “Inner”: If the node is neither a leaf node nor a root node.
 
 Write a solution to report the type of each node in the tree.
+
+![tree1](https://github.com/Mohsem35/DBA/assets/58659448/f1a30364-038c-4ea1-90ad-b6d464cb840e)
 
 Input: 
 Tree table:
