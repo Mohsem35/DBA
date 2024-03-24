@@ -1150,6 +1150,8 @@ FROM ConsecutiveLogins;
 
 **Question-5: Product Price At a Given Date**
 
+বুঝি নাই problem টা 
+
 Write an SQL query to find the prices of all products on 2019-08-16. Assume the price of all products before any change is 10. Return the result table in any order
 
 
@@ -1171,3 +1173,92 @@ Output:
 | 2          | 50    |
 | 1          | 35    |
 | 3          | 10    |
+
+
+```sql
+SELECT p1.product_id,
+  COALESCE(MAX(CASE 
+                 WHEN change_date <= '2019-08-16' THEN new_price 
+                 ELSE NULL 
+               END), 10) AS price
+FROM Products p1
+LEFT JOIN Products p2 ON p1.product_id = p2.product_id
+GROUP BY p1.product_id;
+
+```
+
+`COALESCE(MAX(CASE WHEN change_date <= '2019-08-16' THEN new_price ELSE NULL END), 10) AS price`
+
+এই অংশ একটি নতুন দাম ফিল্ড তৈরি করবে যেটি সর্বোচ্চ দাম নিবে কোন প্রোডাক্টের জন্য। যদি change_date '2019-08-16' এর আগে হয়, তাহলে সেই প্রোডাক্টের নতুন দাম নিবে, অন্যথায় সে ১০ টাকা হিসেবে ফিরে দেবে। COALESCE ফাংশনটি সর্বাধিক দাম ফিল্ডের মান নিবে কিন্তু যদি এক্সপ্রেশনটি NULL হয়, তাহলে সে বিকল্প হিসেবে ১০ টাকা নিবে।
+
+
+**Question-6: Monthly Transaction**
+
+বুঝি নাই 
+
+Write an SQL query to find for each month and country, the number of transactions and their total amount, the number of approved transactions and their total amount. Return the result table in any order.
+
+
+Transactions table:
+
+| id   | country | state    | amount | trans_date |
+|------|---------|----------|--------|------------|
+| 121  | US      | approved | 1000   | 2018-12-18 |
+| 122  | US      | declined | 2000   | 2018-12-19 |
+| 123  | US      | approved | 2000   | 2019-01-01 |
+| 124  | DE      | approved | 2000   | 2019-01-07 |
+
+
+Output: 
+
+| month    | country | trans_count | approved_count | trans_total_amount | approved_total_amount |
+|----------|---------|-------------|----------------|--------------------|-----------------------|
+| 2018-12  | US      | 2           | 1              | 3000               | 1000                  |
+| 2019-01  | US      | 1           | 1              | 2000               | 2000                  |
+| 2019-01  | DE      | 1           | 1              | 2000               | 2000                  |
+
+
+
+```sql
+SELECT
+  YEAR(trans_date) AS year,
+  MONTH(trans_date) AS month,
+  country,
+  COUNT(*) AS trans_count,
+  SUM(amount) AS trans_total_amount,
+  SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END) AS approved_count,
+  SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END) AS approved_total_amount
+FROM Transactions
+GROUP BY YEAR(trans_date), MONTH(trans_date), country
+ORDER BY year, month, country;
+```
+
+**Question-7: Last Person to fit in Bus**
+
+There is a queue of people waiting to board a bus. However, the bus has a weight limit of  1000 kilograms, so there may be some people who cannot board.
+
+Write a solution to find the person_name of the last person that can fit on the bus without exceeding the weight limit. The test cases are generated such that the first person does not exceed the weight limit.
+
+
+Input: 
+Queue table:
+
+| person_id | person_name | weight | turn |
+|-----------|-------------|--------|------|
+| 5         | Alice       | 250    | 1    |
+| 4         | Bob         | 175    | 5    |
+| 3         | Alex        | 350    | 2    |
+| 6         | John Cena   | 400    | 3    |
+| 1         | Winston     | 500    | 6    |
+| 2         | Marie       | 200    | 4    |
+
+Output: 
+
+| person_name |
+|-------------|
+| John Cena   |
+
+```sql
+SELECT person_name 
+FROM (SELECT person_name, weight, turn, SUM(weight) OVER(ORDER BY trun) AS CUM)
+```
