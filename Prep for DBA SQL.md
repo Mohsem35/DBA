@@ -1240,7 +1240,6 @@ There is a queue of people waiting to board a bus. However, the bus has a weight
 Write a solution to find the person_name of the last person that can fit on the bus without exceeding the weight limit. The test cases are generated such that the first person does not exceed the weight limit.
 
 
-Input: 
 Queue table:
 
 | person_id | person_name | weight | turn |
@@ -1259,6 +1258,160 @@ Output:
 | John Cena   |
 
 ```sql
-SELECT person_name 
-FROM (SELECT person_name, weight, turn, SUM(weight) OVER(ORDER BY trun) AS CUM)
+
+WITH CumulativeWeight AS (
+  SELECT person_id, person_name, weight, turn,
+         SUM(weight) OVER (ORDER BY turn) AS cumulative_weight
+  FROM Queue
+)
+SELECT person_name
+FROM CumulativeWeight
+WHERE cumulative_weight <= 1000
+ORDER BY turn DESC
+LIMIT 1;
+```
+The CTE calculates the cumulative weight for each person based on their position in the queue (turn). The main query then finds the first person (ordered by descending turn) whose cumulative weight is less than or equal to the weight limit. This ensures we identify the last person who can board without exceeding the limit
+
+
+**Question-8: Restaurant Growth**
+
+You are the restaurant owner and want to analyze a possible expansion (there will be at least one customer daily). Compute the moving average of how much the customer paid in a seven-day window (i.e., current day + 6 days before). average_amount should be rounded to two decimal places.
+
+Return the result table ordered by visited_on in ascending order.
+
+Customer table:
+
+| customer_id | name         | visited_on   | amount      |
+|-------------|--------------|--------------|-------------|
+| 1           | Jhon         | 2019-01-01   | 100         |
+| 2           | Daniel       | 2019-01-02   | 110         |
+| 3           | Jade         | 2019-01-03   | 120         |
+| 4           | Khaled       | 2019-01-04   | 130         |
+| 5           | Winston      | 2019-01-05   | 110         | 
+| 6           | Elvis        | 2019-01-06   | 140         | 
+| 7           | Anna         | 2019-01-07   | 150         |
+| 8           | Maria        | 2019-01-08   | 80          |
+| 9           | Jaze         | 2019-01-09   | 110         | 
+| 1           | Jhon         | 2019-01-10   | 130         | 
+| 3           | Jade         | 2019-01-10   | 150         | 
+
+Output: 
+
+You are the restaurant owner and want to analyze a possible expansion (there will be at least one customer daily). Compute the moving average of how much the customer paid in a seven-day window (i.e., current day + 6 days before). average_amount should be rounded to two decimal places.
+
+Return the result table ordered by visited_on in ascending order.
+
+Customer table:
+
+| customer_id | name         | visited_on   | amount      |
+|-------------|--------------|--------------|-------------|
+| 1           | Jhon         | 2019-01-01   | 100         |
+| 2           | Daniel       | 2019-01-02   | 110         |
+| 3           | Jade         | 2019-01-03   | 120         |
+| 4           | Khaled       | 2019-01-04   | 130         |
+| 5           | Winston      | 2019-01-05   | 110         | 
+| 6           | Elvis        | 2019-01-06   | 140         | 
+| 7           | Anna         | 2019-01-07   | 150         |
+| 8           | Maria        | 2019-01-08   | 80          |
+| 9           | Jaze         | 2019-01-09   | 110         | 
+| 1           | Jhon         | 2019-01-10   | 130         | 
+| 3           | Jade         | 2019-01-10   | 150         | 
+
+Output: 
+
+| visited_on   | amount       | average_amount |
+|--------------|--------------|----------------|
+| 2019-01-07   | 860          | 122.86         |
+| 2019-01-08   | 840          | 120            |
+| 2019-01-09   | 840          | 120            |
+| 2019-01-10   | 1000         | 142.86         |
+
+
+```sql
+WITH CumulativeSum AS (
+  SELECT
+    customer_id,
+    name,
+    visited_on,
+    amount,
+    SUM(amount) OVER (PARTITION BY visited_on ORDER BY visited_on ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS seven_day_sum
+  FROM Customer
+)
+SELECT
+  visited_on,
+  amount,
+  ROUND(CAST(seven_day_sum AS DECIMAL(10,2)) / 7, 2) AS average_amount
+FROM CumulativeSum
+WHERE seven_day_sum IS NOT NULL -- Filter for rows with a calculated seven_day_sum
+ORDER BY visited_on;
+```
+
+**Question-9: Movie Rating**
+
+Write a solution to:
+
+- Find the user’s name who has rated the greatest number of movies. In case of a tie, return the lexicographically smaller user name.
+
+- Find the movie name with the highest average rating in February 2020. In case of a tie, return the lexicographically smaller movie name.
+
+Movies table:
+| movie_id    |  title       |
+|-------------|--------------|
+| 1           | Avengers     |
+| 2           | Frozen 2     |
+| 3           | Joker        |
+
+Users table:
+| user_id     |  name        |
+|-------------|--------------|
+| 1           | Daniel       |
+| 2           | Monica       |
+| 3           | Maria        |
+| 4           | James        |
+
+MovieRating table:
+| movie_id    | user_id      | rating       | created_at  |
+|-------------|--------------|--------------|-------------|
+| 1           | 1            | 3            | 2020-01-12  |
+| 1           | 2            | 4            | 2020-02-11  |
+| 1           | 3            | 2            | 2020-02-12  |
+| 1           | 4            | 1            | 2020-01-01  |
+| 2           | 1            | 5            | 2020-02-17  | 
+| 2           | 2            | 2            | 2020-02-01  | 
+| 2           | 3            | 2            | 2020-03-01  |
+| 3           | 1            | 3            | 2020-02-22  | 
+| 3           | 2            | 4            | 2020-02-25  | 
+
+Output: 
+
+| results      |
+|--------------|
+| Daniel       |
+| Frozen 2     |
+
+```sql
+-- Find user with most movie ratings
+WITH UserRatingCount AS (
+  SELECT u.name, COUNT(*) AS rating_count
+  FROM MovieRating mr
+  JOIN Users u ON mr.user_id = u.user_id
+  GROUP BY u.name
+  ORDER BY rating_count DESC, name ASC
+  LIMIT 1
+)
+SELECT results
+FROM UserRatingCount;
+
+-- Find movie with highest average rating in February 2020
+WITH MovieAvgRating AS (
+  SELECT m.title, AVG(rating) AS avg_rating
+  FROM MovieRating mr
+  JOIN Movies m ON mr.movie_id = m.movie_id
+  WHERE MONTH(created_at) = 2 AND YEAR(created_at) = 2020
+  GROUP BY m.title
+  ORDER BY avg_rating DESC, title ASC
+  LIMIT 1
+)
+SELECT results
+FROM MovieAvgRating;
 ```
