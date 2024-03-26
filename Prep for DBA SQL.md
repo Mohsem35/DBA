@@ -1456,3 +1456,378 @@ SELECT stock_name, SUM(
 FROM Stocks
 GROUP BY stock_name
 ```
+
+
+#### FAANG QUESTION FOR PRACTICE**
+
+**1. Facebook – Pages with No Likes**
+
+Assume you’re given two tables containing data about Facebook Pages and their respective likes (as in “Like a Facebook Page”). Write a query to return the IDs of the Facebook pages with zero likes. The output should be sorted in ascending order based on the page IDs.\
+
+`pages` table:
+
+
+| page_id   | page_name |
+|-----------|-------------------|
+| 20001 | SQL Solutions |
+| 20045 | Brain Exercises |
+| 20701	| Tips for Data Analysts |
+
+`page_likes` table
+
+| user_id | page_id | liked_date         |
+|---------|---------|--------------------|
+| 111     | 20001   | 04/08/2022 00:00:00|
+| 121     | 20045   | 03/12/2022 00:00:00|
+| 156     | 20001   | 07/25/2022 00:00:00|
+
+| page_id |
+|---------|
+| 20701   |
+
+
+```sql
+SELECT p.page_id FROM pages p
+LEFT JOIN page_likes pl ON p.page_id = pl.page_id
+-- 2 টা table join করার পরে যেইটা null থাকব সেইটাই like পায় নাই 
+WHERE pl.page_id IS NULL
+ORDER BY pl.page_id
+```
+
+**2. Twitter – Histogram of Tweets**
+
+Assume you’re given a table of Twitter tweet data and write a query to obtain a histogram of tweets posted per user in 2022. Output the tweet counts per user as the bucket and the number of Twitter users who fall into that bucket. In other words, group the users by the number of tweets they posted in 2022 and count the number of users in each group.
+
+`tweets` table input:
+
+| tweet_id | user_id | msg                                                        | tweet_date           |
+|----------|---------|------------------------------------------------------------|----------------------|
+| 214252   | 111     | Am considering taking Tesla private at $420. Funding secured. | 12/30/2021 00:00:00 |
+| 739252   | 111     | Despite the constant negative press covfefe                 | 01/01/2022 00:00:00 |
+| 846402   | 111     | Following @NickSinghTech on Twitter changed my life!        | 02/14/2022 00:00:00 |
+| 241425   | 254     | If the salary is so competitive why won’t you tell me what it is? | 03/01/2022 00:00:00 |
+| 231574   | 148     | I no longer have a manager. I can't be managed             | 03/23/2022 00:00:00 |
+
+
+Output:
+
+| tweet_bucket | users_num |
+|--------------|-----------|
+| 1            | 2         |
+| 2            | 1         |
+
+**Explanation:**
+
+Based on the example output, there are two users who posted only one tweet in 2022, and one user who posted two tweets in 2022. The query groups the users by the number of tweets they posted and displays the number of users in each group.
+
+
+```sql
+SELECT tweet_count_per_user AS tweet_bucket, COUNT(user_id) AS users_num
+FROM (
+  SELECT user_id, COUNT(tweet_id) AS tweet_count_per_user
+  FROM tweets
+  WHERE YEAR(tweet_date) = 2022
+  GROUP BY user_id
+) AS total_tweets
+GROUP BY tweet_count_per_user;
+```
+
+**3. Facebook – App Click-through Rate (CTR)**
+Assume you have an events table on Facebook app analytics. Write a query to calculate the click-through rate (CTR) for the app in 2022 and round the results to 2 decimal places.
+
+Definition and note:
+
+- Percentage of click-through rate (CTR) = 100.0 * Number of clicks / Number of impressions
+- To avoid integer division, multiply the CTR by 100.0, not 100.
+
+`events` table
+
+| app_id | event_type | timestamp           |
+|--------|------------|---------------------|
+| 123    | impression | 07/18/2022 11:36:12 |
+| 123    | impression | 07/18/2022 11:37:12 |
+| 123    | click      | 07/18/2022 11:37:42 |
+| 234    | impression | 07/18/2022 14:15:12 |
+| 234    | click      | 07/18/2022 14:16:12 |
+
+
+Output:
+
+| app_id | ctr    |
+|--------|--------|
+| 123    | 50.00  |
+| 234    | 100.00 |
+
+**Explanation**
+
+Let's consider an example of App 123. This app has a click-through rate (CTR) of 50.00% because out of the 2 impressions it received, it got 1 click.
+
+To calculate the CTR, we divide the number of clicks by the number of impressions, and then multiply the result by 100.0 to express it as a percentage. In this case, 1 divided by 2 equals 0.5, and when multiplied by 100.0, it becomes 50.00%. So, the CTR of App 123 is 50.00%.
+
+```sql
+SELECT 
+    app_id, 
+    ROUND(
+        100.0 * SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) / 
+        SUM(CASE WHEN event_type = 'impression' THEN 1 ELSE 0 END), 
+    2) AS ctr
+FROM events
+WHERE YEAR(timestamp) = 2022
+GROUP BY app_id;
+```
+
+**4. New York Times – Laptop vs Mobile Viewership**
+
+Assume you’re given the table on user viewership categorized by device type, where the three types are laptop, tablet, and phone. Write a query that calculates the total viewership for laptops and mobile devices, where mobile is defined as the sum of tablet and phone viewership. Output the total viewership for laptops as laptop_reviews and the total viewership for mobile devices as mobile_views.
+
+`viewership` table
+
+| user_id | device_type | view_time           |
+|---------|-------------|---------------------|
+| 123     | tablet      | 01/02/2022 00:00:00 |
+| 125     | laptop      | 01/07/2022 00:00:00 |
+| 128     | laptop      | 02/09/2022 00:00:00 |
+| 129     | phone       | 02/09/2022 00:00:00 |
+| 145     | tablet      | 02/24/2022 00:00:00 |
+
+Output
+
+| laptop_views | mobile_views |
+|--------------|--------------|
+| 2            | 3            |
+
+```sql
+SELECT 
+SUM(CASE WHEN device_type='laptop' THEN 1 ELSE 0 END) AS laptop_reviews,
+SUM(CASE WHEN device_type IN ('phone','tablet') THEN 1 ELSE 0 END) AS mobile_reviews
+FROM viewership;
+```
+
+**5. Microsoft – Teams Power Users**
+
+Write a query to identify the top 2 Power Users who sent the most messages on Microsoft Teams in August 2022. Display these 2 users’ IDs and the total number of messages they sent. Output the results in descending order based on the count of the messages.
+
+Assumption: No two users have sent the same number of messages in August 2022.
+
+`messages` table
+
+| message_id | sender_id | receiver_id | content                  | sent_date           |
+|------------|-----------|-------------|--------------------------|---------------------|
+| 901        | 3601      | 4500        | You up?                  | 08/03/2022 00:00:00 |
+| 902        | 4500      | 3601        | Only if you're buying    | 08/03/2022 00:00:00 |
+| 743        | 3601      | 8752        | Let's take this offline | 06/14/2022 00:00:00 |
+| 922        | 3601      | 4500        | Get on the call          | 08/10/2022 00:00:00 |
+
+Output:
+
+| sender_id | message_count |
+|-----------|---------------|
+| 3601      | 2             |
+| 4500      | 1             |
+
+```sql
+SELECT sender_id, COUNT(message_id) AS message_count
+FROM messages
+WHERE EXTRACT(MONTH FROM sent_date) = 8 AND EXTRACT(YEAR FROM sent_date) = 2022
+GROUP BY sender_id
+ORDER BY message_count DESC
+LIMIT 2;
+```
+
+**6. Linkedin – Duplicate Job Listings**
+
+Assume you’re given a table containing job postings from various companies on the LinkedIn platform. Write a query to retrieve the count of companies that have posted duplicate job listings.
+
+Definition:
+- Duplicate job listings are defined as two job listings within the same company that share identical titles and descriptions.
+
+`job_listings` table:
+
+| job_id | company_id | title           | description                                                                                                                                                                     |
+|--------|------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 248    | 827        | Business Analyst | Business analyst evaluates past and current business data with the primary goal of improving decision-making processes within organizations.                                   |
+| 149    | 845        | Business Analyst | Business analyst evaluates past and current business data with the primary goal of improving decision-making processes within organizations.                                   |
+| 945    | 345        | Data Analyst    | Data analyst reviews data to identify key insights into a business's customers and ways the data can be used to solve problems.                                                 |
+| 164    | 345        | Data Analyst    | Data analyst reviews data to identify key insights into a business's customers and ways the data can be used to solve problems.                                                 |
+| 172    | 244        | Data Engineer   | Data engineer works in a variety of settings to build systems that collect, manage, and convert raw data into usable information for data scientists and business analysts to interpret. |
+
+Output:
+
+| duplicate_companies |
+|---------------------|
+| 1                   |
+
+**Explanation:**
+
+There is one company ID 345 that posted duplicate job listings. The duplicate listings, IDs 945 and 164 have identical titles and descriptions.
+
+```sql
+SELECT COUNT(DISTINCT company_id) AS duplicate_companies
+FROM (
+  SELECT company_id, title, description
+  FROM job_listings
+  GROUP BY company_id, title, description
+  HAVING COUNT(*) > 1
+) AS duplicates;
+```
+
+
+**7. Amazon – Average Review Rating**
+
+Given the reviews table, write a query to retrieve the average star rating for each product, grouped by month. The output should display the month as a numerical value, product ID, and average star rating rounded to two decimals. Sort the output first by month and then by product ID.
+
+`reviews` table
+
+| review_id | user_id | submit_date         | product_id | stars |
+|-----------|---------|---------------------|------------|-------|
+| 6171      | 123     | 06/08/2022 00:00:00 | 50001      | 4     |
+| 7802      | 265     | 06/10/2022 00:00:00 | 69852      | 4     |
+| 5293      | 362     | 06/18/2022 00:00:00 | 50001      | 3     |
+| 6352      | 192     | 07/26/2022 00:00:00 | 69852      | 3     |
+| 4517      | 981     | 07/05/2022 00:00:00 | 69852      | 2     |
+
+Output:
+
+| mth | product | avg_stars |
+|-----|---------|-----------|
+| 6   | 50001   | 3.50      |
+| 6   | 69852   | 4.00      |
+| 7   | 69852   | 2.50      |
+
+
+**Explanation**
+
+Product 50001 received two ratings of 4 and 3 in the month of June (6th month), resulting in an average star rating of 3.5.
+
+```sql
+SELECT EXTRACT(MONTH FROM submit_date) AS mth,
+       product_id,
+       ROUND(AVG(stars), 2) AS avg_stars
+FROM reviews
+GROUP BY EXTRACT(MONTH FROM submit_date), product_id
+ORDER BY mth, product_id;
+```
+
+**8. JPMorgan – Cards Issued Difference**
+
+Your team at JPMorgan Chase is preparing to launch a new credit card, and to gain some insights, you’re analyzing how many credit cards were issued each month.
+
+Write a query that outputs the name of each credit card and the difference in the number of issued cards between the month with the highest and lowest issuance cards. Arrange the results based on the largest disparity.
+
+`monthly_cards_issued` table
+
+| card_name            | issued_amount | issue_month | issue_year |
+|----------------------|---------------|-------------|------------|
+| Chase Freedom Flex   | 55000         | 1           | 2021       |
+| Chase Freedom Flex   | 60000         | 2           | 2021       |
+| Chase Freedom Flex   | 65000         | 3           | 2021       |
+| Chase Freedom Flex   | 70000         | 4           | 2021       |
+| Chase Sapphire Reserve | 170000      | 1           | 2021       |
+| Chase Sapphire Reserve | 175000      | 2           | 2021       |
+| Chase Sapphire Reserve | 180000      | 3           | 2021       |
+
+Output:
+
+| card_name            | difference |
+|----------------------|------------|
+| Chase Freedom Flex   | 15000      |
+| Chase Sapphire Reserve | 10000    |
+
+```sql
+WITH highest_monthly_issued AS (
+  SELECT card_name, MAX(issued_amount) AS highest_issued
+  FROM monthly_cards_issued
+  GROUP BY card_name
+),
+lowest_monthly_issued AS (
+  SELECT card_name, MIN(issued_amount) AS lowest_issued
+  FROM monthly_cards_issued
+  GROUP BY card_name
+)
+SELECT hmi.card_name, hmi.highest_issued - lmi.lowest_issued AS difference
+FROM highest_monthly_issued AS hmi
+JOIN lowest_monthly_issued AS lmi ON hmi.card_name = lmi.card_name
+ORDER BY difference DESC;
+```
+
+**9. Cities With Completed Trades**
+
+Assume you’re given the tables containing completed trade orders and user details in a Robinhood trading system.
+
+Write a query to retrieve the top three cities that have the highest number of completed trade orders listed in descending order. Output the city name and the corresponding number of completed trade orders.
+
+`trades` table
+
+| order_id | user_id | price | quantity | status    | timestamp           |
+|----------|---------|-------|----------|-----------|---------------------|
+| 100101   | 111     | 9.80  | 10       | Cancelled | 08/17/2022 12:00:00 |
+| 100102   | 111     | 10.00 | 10       | Completed | 08/17/2022 12:00:00 |
+| 100259   | 148     | 5.10  | 35       | Completed | 08/25/2022 12:00:00 |
+| 100264   | 148     | 4.80  | 40       | Completed | 08/26/2022 12:00:00 |
+| 100305   | 300     | 10.00 | 15       | Completed | 09/05/2022 12:00:00 |
+| 100400   | 178     | 9.90  | 15       | Completed | 09/09/2022 12:00:00 |
+| 100565   | 265     | 25.60 | 5        | Completed | 12/19/2022 12:00:00 |
+
+`users` table
+
+
+| user_id | city          | email                              | signup_date           |
+|---------|---------------|------------------------------------|-----------------------|
+| 111     | San Francisco | rrok10@gmail.com                  | 08/03/2021 12:00:00  |
+| 148     | Boston        | sailor9820@gmail.com              | 08/20/2021 12:00:00  |
+| 178     | San Francisco | harrypotterfan182@gmail.com       | 01/05/2022 12:00:00  |
+| 265     | Denver        | shadower_@hotmail.com             | 02/26/2022 12:00:00  |
+| 300     | San Francisco | houstoncowboy1122@hotmail.com     | 06/30/2022 12:00:00  |
+
+Output
+
+| city          | total_orders |
+|---------------|--------------|
+| San Francisco | 3            |
+| Boston        | 2            |
+| Denver        | 1            |
+
+
+**Explanation**
+
+In the given dataset, San Francisco has the highest number of completed trade orders with 3 orders. Boston holds the second position with 2 orders, and Denver ranks third with 1 order.
+
+```sql
+SELECT u.city, COUNT(t.order_id) as total_orders
+  FROM trades t
+  LEFT JOIN users u ON t.user_id = u.user_id
+  WHERE t.status = 'Completed'
+GROUP BY city
+ORDER BY total_orders DESC
+LIMIT 3
+```
+**10. Alibaba – Compressed Mean**
+
+You're trying to find the mean number of items per order on Alibaba, rounded to 1 decimal place using tables which includes information on the count of items in each order (item_count table) and the corresponding number of orders for each item count (order_occurrences table).
+
+`items_per_order` table
+
+| item_count | order_occurrences |
+|------------|-------------------|
+| 1          | 500               |
+| 2          | 1000              |
+| 3          | 800               |
+| 4          | 1000              |
+
+| mean |
+|------|
+| 2.7  |
+
+**Explanation**
+Let's calculate the arithmetic average:
+
+Total items = (1*500) + (2*1000) + (3*800) + (4*1000) = 8900
+
+Total orders = 500 + 1000 + 800 + 1000 = 3300
+
+Mean = 8900 / 3300 = 2.7
+
+```sql
+SELECT ROUND(AVG(item_count * order_occurrences) / SUM(order_occurrences), 1) AS mean
+FROM items_per_order;
+```
