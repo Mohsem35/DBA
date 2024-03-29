@@ -1814,7 +1814,7 @@ You're trying to find the mean number of items per order on Alibaba, rounded to 
 | 3          | 800               |
 | 4          | 1000              |
 
-| mean |
+| mean |  
 |------|
 | 2.7  |
 
