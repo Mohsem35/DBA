@@ -717,3 +717,237 @@ Q4. How regularly will you carry out tests to ensure data privacy?
  - Generated with https://kome.ai
 
 [100+ SQL Interview Questions and Answers for 2023](https://www.shiksha.com/online-courses/articles/top-sql-interview-questions-and-answers/)
+
+
+1. What does a PostgreSQL partitioned table look like?
+
+The partitioned table is a **logical structure**. It is used to split a large table into smaller pieces, which are called partitions.
+
+
+**Database Architecture**
+
+Database architecture refers to the overall **design and structure of a database system**, including the hardware and software components that make up the system, **the way the data is organized and stored**, and the ways in which the data can be accessed and manipulated. There are several different types of database architectures, including:
+
+- **Centralized** database architecture
+- **Distributed** database architecture
+- **Client-server** database architecture
+- **Cloud database** architecture
+
+The choice of database architecture depends on the needs of the organization, including the amount and type of data being stored, the number of users who need to access the data, and the performance and scalability requirements of the system.
+
+**What Are Database Challenges?** 
+
+One of the most common challenges that enterprises encounter when working with a database is upscaling as the **data volumes increase**. And when you do work with a database that can handle larger volumes of data, the performance of your database depends to a great extent on **how well you maintain and optimize the performance**. However, it is a task to constantly keep an eye out for hindrances in the performance of your database. 
+
+Yet another challenge worth dodging when working with your database is **data safety**. When you don’t take proper precautions to keep your data completely safe from data breaches and unaccounted access, it may cost your business its reputation. Therefore, it is extremely crucial to ensure all these challenges are overcome for smooth and effortless database performance.
+
+
+**Key Factors That Influence Database Performance**
+
+Database performance is the term used for the rate at which the demand for information is supplied by the DBMS. With that said, here are the factors that can influence database performance:
+
+- **Workload**: Since the workload of a DBMS can drastically **vary from day-to-day and even hour-to-hour operations**, it can heavily influence how efficiently the database performs. 
+
+- **Throughput**: The **overall ability of the computer to process data** is known as throughput. Database performance gets affected because of the effects of **installing soft or hard capping** on boxes on throughput. 
+
+- **Resources**: When there is an increased number of hardware or software resources, it affects the database performance. 
+
+
+_3. What purpose does pgAdmin serve in PostgreSQL?_
+
+The pgAdmin in PostgreSQL is a data administration tool. It serves the purpose of **retrieving**, **developing**, **testing**, and **maintaining** databases.
+
+_5. What do you know about PL/Python?_
+
+
+PL/Python refers to the **procedural language extension for PostgreSQL** that allows developers to **write stored procedures and functions in Python**. PostgreSQL is a powerful open-source relational database management system, and PL/Python enables developers to leverage Python's rich ecosystem of libraries and tools within the database environment.
+
+
+_7. What would be the most important pieces of information you would want to include in a schema?_
+
+A **schema contains tables** along with data types, **views**, **indexes**, **operators**, sequences, and **functions**.
+
+_10. What do you think indexes are used for?_
+
+Indexes are used by the **search engine to speed up data retrieval**.
+
+_11. What do you think is a Cluster index's purpose?_
+
+Cluster index **sorts table data rows** based on their key values.
+
+_12. What do you think are database call back functions? How do they help your application?_
+
+The database call back functions are called **PostgreSQL Triggers**. When a specified **database event occurs**, the PostgreSQL Triggers are **performed or invoked** automatically.
+
+Database callback functions are also known as database triggers. They are instructions automatically executed in response to specific events on a database table, such as insert, update, or delete operations. The purpose of a database trigger is to maintain **data integrity**, **enforce business rules**, and **perform additional actions**, such as auditing or cascading updates. 
+
+_13. What are the benefits of specifying data types in columns while creating a table?_
+
+Some of these benefits include **consistency**, **compactness**, **validation**, and **performance**.
+
+**14. What do you need to do to update statistics in PostgreSQL?**
+
+To **update statistics** in PostgreSQL, we need to use a special function called a **VACUUM**.
+
+_16. How can you completely delete a table?_
+
+We can delete complete data from an existing table using the PostgreSQL **TRUNCATE TABLE** command.
+
+_17. What are the different properties of a transaction in PostgreSQL? Which acronym is used to refer to them?_
+
+The properties of a transaction in PostgreSQL include **Atomicity**, **Consistency**, **Isolation**, and **Durability**. These are referred to by the acronym, namely ACID. 
+
+_18. What purpose does the CTIDs field serve?_
+
+The **CTIDs** field identifies the **specific physical rows in a table** according to their **block and offsets positions** in that table.
+
+_19. Which are the commands used to control transactions in PostgreSQL?_
+
+The commands used to control transactions in PostgreSQL are BEGIN TRANSACTION, COMMIT, and ROLLBACK.
+
+_21. How is security ensured in PostgreSQL?_
+
+PostgreSQL uses **SSL connections to encrypt client or server communications** so that security will be ensured.
+
+_22. What is the function of the Atomicity property in PostgreSQL?_
+
+Atomicity property ensures the **successful completion of all the operations** in a work unit.
+
+_23. What do you think are some of the advantages of using PostgreSQL?_
+
+Some of the advantages of 
+- PostgreSQL are open-source DBMS, community support, 
+- ACID compliance, 
+- diverse indexing techniques, 
+- full-text search, 
+- Multi-version concurrency control (MVCC)
+- a variety of replication methods, and 
+- diversified extension functions etc.
+
+_24. How does Write-Ahead Logging help you?_
+
+The Write-Ahead Logging enhances database reliability by **logging changes** before any changes or updates are made to the database.
+
+_26. How do you think you can store binary data in PostgreSQL?_
+
+We can store the **binary data** in PostgreSQL either by using **bytes** or by using the **large object feature**.
+
+_27. What do you think of the term "non-clustered index"?_
+
+In a non-clustered index, the index row order **doesn’t match** the **order in actual data**.
+
+_28. What purpose do you think table space serves in PostgreSQL?_
+
+It is a location in the disk. In this, PostgreSQL **stores the data files**, which contain indices and tables, etc.
+
+_30. What does a token in a SQL statement represent?_
+
+In SQL, a token represents the smallest **individual unit in a SQL statement**. Tokens are the building blocks of SQL syntax and can include keywords, identifiers, literals, operators, punctuation marks, and whitespace.
+
+Here's a breakdown of the different types of tokens found in SQL statements:
+
+**Keywords**: Keywords are reserved words in SQL that have special meanings and cannot be used as identifiers (e.g., SELECT, INSERT, UPDATE, DELETE, JOIN, WHERE, etc.).
+
+**Identifiers**: Identifiers are **names given to database objects** such as tables, columns, views, indexes, and stored procedures. Identifiers must adhere to certain naming rules and can be delimited by quotation marks or brackets if they contain special characters or are case-sensitive.
+
+**Literals**: Literals are **constant values used in SQL** statements, such as strings, numbers, dates, and boolean values. String literals are enclosed in single quotes (' '), numeric literals are written as plain numbers, date literals are typically written in a specific format (e.g., 'YYYY-MM-DD'), and boolean literals may vary depending on the database system.
+
+**Operators**: Operators are symbols used to perform operations on data in SQL statements. Common operators include arithmetic operators (+, -, *, /), comparison operators (=, <>, <, >, <=, >=), logical operators (AND, OR, NOT), and concatenation operator (||).
+
+**Punctuation Marks**: Punctuation marks such as commas (,), semicolons (;), parentheses (()), periods (.), and brackets ([] or {}) are used to structure SQL statements and separate different elements within them.
+
+**Whitespace**: Whitespace refers to **spaces, tabs, and line breaks** used for formatting and readability in SQL statements. While whitespace is generally ignored by the SQL parser, it helps improve the readability of the code for developers.
+
+31. What is the process of splitting a large table into smaller pieces called in PostgreSQL?
+
+In PostgreSQL, the process of splitting a large table into smaller pieces is called table partitioning. It can be done using several different methods, including **range** partitioning, **list** partitioning, and **hash** partitioning. 
+
+
+_33. What does a Cluster index do?_
+
+A clustered index **organizes the data rows** in a table **based on** the order of the **indexed columns**. This means the rows with the same indexed values will be physically stored together on the storage media. This improves the performance of queries that involve those indexed columns, as the database engine can retrieve the relevant data faster.
+
+_37. What do you understand about a base directory in PostgreSQL?_
+
+In PostgreSQL, the base directory refers to the **top-level directory** where **all data files** for a specific database cluster are stored. This includes subdirectories for each database within the cluster, as well as files containing **configuration settings** and other **metadata**.
+
+_40. What is Multi-Version Concurrency Control in PostgreSQL? Why is it used?_
+
+Multi-Version Concurrency Control (MVCC) is a technique used in PostgreSQL to allow multiple transactions to access the same data simultaneously without conflicting with each other. It is used by creating a separate version of a row for each transaction that modifies it.
+
+
+_41. What is the key difference between multi-version and lock models?_
+
+A multi-version model allows **multiple versions of the same data to exist simultaneously**, while a lock model only allows one version of the data to exist at a time, and **locks the data while it is being edited**.
+
+47. What is the difference between clustered index and non clustered index in PostgreSQL?
+
+A clustered index helps in determining the physical order of data in a table, while a **non-clustered index provides a faster way** to look up data **without affecting the physical order** of the table in PostgreSQL.
+
+
+_49. What do you understand about parallel queries in PostgreSQL? How does it work?_
+
+Parallel query in PostgreSQL is a feature that allows **multiple parallel worker processes to work on a single query** to improve performance and speed up query execution time by **breaking down the query into smaller parts and processing them in parallel**. 
+
+50. What is the use of command enable-debug in PostgreSQL?
+
+The "enable_debug" command in PostgreSQL is used to **enable or disable debugging output** for various subsystems of the database system.
+
+51. What are the reserved words in PostgreSQL?
+
+In PostgreSQL, reserved words are keywords that have special meanings and are reserved for use by the SQL language or the PostgreSQL database system. These reserved words cannot be used as identifiers such as table names, column names, or other object names unless they are quoted.
+
+
+ALL
+ANALYSE
+ANALYZE
+AND
+ANY
+ARRAY
+AS
+ASC
+ASYMMETRIC
+AUTHORIZATION
+BINARY
+BOTH
+CASE
+CAST
+CHECK
+COLLATE
+COLUMNDO
+ELSE
+END
+EXCEPT
+FALSE
+FETCH
+FOR
+FOREIGN
+FREEZE
+FROM
+FULL
+GRANT
+GROUP
+HAVING
+ILIKE
+IN
+INITIALLY
+INNER
+INTERSECT
+INTO
+IS
+ISNULL
+
+
+53. What are the three phenomena that must be prevented between concurrent transactions in PostgreSQL?
+
+The three phenomena that must be prevented between concurrent transactions in PostgreSQL are **lost updates**, **dirty reads**, and **inconsistent reads**.
+
+
+_55. What do you understand about a sequence in PostgreSQL?_
+
+A sequence in PostgreSQL is a database object that generates a sequence of unique integers, which can be used as the default value for a column or as part of a primary key. 
+
+
+56. What do you understand about the inverted file in PostgreSQL?
+
+An inverted file in PostgreSQL is a **data structure** used to **efficiently search and retrieve data** from a table or index by mapping terms or keywords to the corresponding rows or documents in which they appear. 
