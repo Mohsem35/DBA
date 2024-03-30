@@ -543,9 +543,7 @@ The main objective of the **`pg_archivecleanup`** tool in PostgreSQL is to **get
 [Top 50 PostgreSQL Interview Questions and Answers](https://intellipaat.com/blog/interview-question/postgresql-interview-questions/#postgresql_interview_questions_for_2_to_3_years_of_experience)
 
 
-[Top 50+ Most Asked PostgreSQL Interview Questions for 2024](https://www.simplilearn.com/postgresql-interview-questions-answers-article)
 
-[Top PostgreSQL developer interview questions and answers 2024](https://www.turing.com/interview-questions/postgresql)
 
 [PostgreSQL DBA Interview Questions](https://nbcampus.com/tech-interview-made-easy/postgresql-dba/?v=87a47565be47)
 
