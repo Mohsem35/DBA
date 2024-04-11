@@ -35,7 +35,7 @@ SELECT UPPER(EmpFname) AS EmpName
 FROM EmployeeInfo;
 ```
 
-_Q2. Write a query to fetch the number of employees working in the department ‘HR’._
+_Q2. Write a query to fetch the **number** of employees working in the department ‘HR’._
 
 ```sql
 SELECT COUNT(*) 
@@ -146,12 +146,15 @@ AND P.EmpPosition IN ('Manager');
 
 _Q17. Write a query to fetch the department-wise count of employees sorted by department’s count in ascending order._
 
+
+
 ```sql
 SELECT Department, COUNT(EmpID) as EmpDeptCount
 FROM EmployeeInfo
 GROUP BY Department
 ORDER BY EmpDeptCount;
 ```
+> Dept wise employee count করতে গেলে `COUNT(EmpID)` লাগবেই
 
 _Q18. Write a query to calculate the even and odd records from a table._
 
