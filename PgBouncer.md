@@ -21,8 +21,10 @@ cp pgbouncer.ini pgbouncer.ini.copy
 vim /etc/pgbouncer/pgbouncer.ini
 
 # change the following parametes of pgbouncer config file
+
 [databases]
 testdb = host=172.16.7.90 port=5432 dbname=testdb
+
 
 [pgbouncer]
 logfile = /var/log/postgresql/pgbouncer.log
@@ -51,6 +53,10 @@ sudo systemctl status pgbouncer.service
 
 # connect to database through pgbouncer
 psql -h 127.0.0.1 -p 6432 -U testdb
+
+psql -h 118.67.215.244 -p 6432 -U your_user -d your_database
+
+> this command attempts to connect to your database through PgBouncer
 
 # benchmark testing
 pgbench -h 172.16.7.90 -p 6432 -c 10 -t 10000 -U testuser -d testdb
