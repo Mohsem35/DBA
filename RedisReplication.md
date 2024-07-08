@@ -522,8 +522,7 @@ mv /home/ubuntu/dump.rdb /redis/data/directory
 
 step 5: Restart daemon and start redis server 
 
-```
-sudo systemctl daemon-reload
+```shell
 sudo systemctl start redis-server.service
 ```
 
