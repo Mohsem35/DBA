@@ -64,6 +64,19 @@ where profile = 'test';
 delete from <table_name> a using <table_name> b where a=b and a.ct<column_name>>b.ct<column_name>;
 ```
 
+- Identify blocking queries & terminate
+
+```sql
+SELECT blocked_locks.pid AS blocked_pid, blocking_locks.pid AS blocking_pid
+FROM pg_catalog.pg_locks blocked_locks
+JOIN pg_catalog.pg_locks blocking_locks ON blocking_locks.locktype = blocked_locks.locktype
+WHERE NOT blocked_locks.granted;
+```
+```sql
+SELECT pg_terminate_backend(blocking_pid);
+```
+
+
 ### Errors in MRA
 
 ```shell
