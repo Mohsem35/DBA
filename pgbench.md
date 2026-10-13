@@ -89,10 +89,12 @@ If `pgbench` is not on your `PATH`, call it with the full path or add the bin di
 
 Benchmark on a separate cluster so you never load a real database and you control every setting. Run as the `postgres` OS user (or any non-root user).
 
+This creates a standalone cluster with `initdb`. Its `postgresql.conf` and `pg_hba.conf` live **inside** `$PGDATA`, not under `/etc`. On Ubuntu/Debian you can use the distribution's own tools instead; see [Ubuntu / Debian: use pg_createcluster](#ubuntu--debian-use-pg_createcluster) below.
+
 ```bash
 # --- paths: pick the line for your OS ---
 export PGBIN=/usr/pgsql-18/bin              # RHEL / Rocky / Alma
-# export PGBIN=/usr/lib/postgresql/18/bin   # Ubuntu / Debian
+# export PGBIN=/usr/lib/postgresql/18/bin   # Ubuntu / Debian (not on PATH by default)
 
 export PATH=$PGBIN:$PATH
 export PGDATA=$HOME/pgbench_lab/data
@@ -124,6 +126,56 @@ Notes:
 - `wal_buffers` defaults to `-1` (automatic: 1/32 of `shared_buffers`, capped at 16 MB), so you usually do not need to set it.
 - The `-l` flag of `pg_ctl` is a lowercase **L** (log file), not the digit 1.
 - Check a setting with `psql -d pgbench -c "SHOW shared_buffers;"`.
+
+
+### Ubuntu / Debian: use pg_createcluster
+
+On Ubuntu and Debian, installing `postgresql-18` creates a default cluster called **`18/main`** on port 5432:
+
+| What | Location for `18/main` |
+|---|---|
+| Configuration (`postgresql.conf`, `pg_hba.conf`, `pg_ident.conf`) | `/etc/postgresql/18/main/` |
+| Data directory | `/var/lib/postgresql/18/main/` |
+| Server log | `/var/log/postgresql/postgresql-18-main.log` |
+| Programs (`initdb`, `pg_ctl`, `pgbench`) | `/usr/lib/postgresql/18/bin/` |
+
+Instead of running `initdb` by hand, you can create a separate lab cluster with the same layout:
+
+```bash
+# Creates config in /etc/postgresql/18/pgbench/ and data in /var/lib/postgresql/18/pgbench/
+sudo pg_createcluster 18 pgbench --port=5433
+
+# Put lab settings in a drop-in file (conf.d is included by default on Debian/Ubuntu)
+sudo tee /etc/postgresql/18/pgbench/conf.d/pgbench-lab.conf > /dev/null <<'CONF'
+shared_buffers = 256MB
+max_wal_size = 4GB
+checkpoint_timeout = 15min
+log_checkpoints = on
+track_io_timing = on
+shared_preload_libraries = 'pg_stat_statements'
+CONF
+
+sudo systemctl start postgresql@18-pgbench      # or: sudo pg_ctlcluster 18 pgbench start
+pg_lsclusters                                    # lists clusters, ports, status, data dirs
+
+sudo -u postgres createdb -p 5433 pgbench
+sudo -u postgres psql -p 5433 -d pgbench -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"
+```
+
+Useful commands for this layout:
+
+```bash
+sudo systemctl restart postgresql@18-pgbench                # after changing shared_buffers
+sudo -u postgres psql -p 5433 -c "SHOW config_file;"        # which postgresql.conf is in use
+sudo -u postgres psql -p 5433 -c "SHOW data_directory;"
+sudo pg_dropcluster 18 pgbench --stop                        # remove the lab cluster completely
+```
+
+When you use this cluster with the rest of the guide:
+
+- Add `-p 5433` (or `export PGPORT=5433`) and run commands as the `postgres` user (`sudo -u postgres ...`).
+- Replace `pg_ctl -D "$PGDATA" restart` with `sudo systemctl restart postgresql@18-pgbench`.
+- `ALTER SYSTEM` writes to `postgresql.auto.conf` in the data directory (`/var/lib/postgresql/18/pgbench/`), which overrides the files in `/etc`.
 
 ---
 
@@ -697,6 +749,9 @@ pgbench -i -I d pgbench          # drop only the pgbench tables
 dropdb pgbench                   # or drop the whole database
 pg_ctl -D "$PGDATA" stop         # stop the lab cluster
 rm -rf "$HOME/pgbench_lab"       # remove the lab cluster entirely (irreversible)
+
+# Ubuntu/Debian cluster created with pg_createcluster:
+sudo pg_dropcluster 18 pgbench --stop
 ```
 
 ---
